@@ -25,6 +25,7 @@ async function initUsers() {
     {
       email: process.env.USER_EMAIL,
       password: await User.hashPassword(process.env.USER_PASSWORD),
+      username: 'Pepe',
     },
   ]);
   console.log(
