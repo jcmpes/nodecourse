@@ -4,6 +4,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const loginController = require('./controllers/loginController');
+const registerController = require('./controllers/registerController');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -21,6 +22,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // API
+app.post('/api/v1/register', registerController.register);
 app.post('/api/v1/loginJWT', loginController.postJWT);
 //app.use('/api/v1/courses', require('./routes/api/courses'));
 
