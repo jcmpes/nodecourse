@@ -1,5 +1,6 @@
 'use strict';
 
+const sendEmail = require('../lib/mailing');
 // eslint-disable-next-line no-unused-vars
 const { User } = require('../models');
 
@@ -18,8 +19,17 @@ class RegisterController {
           username,
         },
       ]);
+      const mailObj = {
+        from: 'confirm@nodecourse.com',
+        subject: `Welcome, ${username}`,
+        recipients: ['usuario616@gmail.com'], // <--- For Development (change to desired recepter)
+        // recipients: [email], // <--------------------- For Production
+        message: `Welcome, ${username}<br>Please, confirm your email account.`,
+      };
+      //TODO: Make it a verification mail
+      sendEmail(mailObj);
 
-      res.json({ success: `user created` });
+      res.json({ success: true, message: `user created` });
     } catch (err) {
       //err.message = ''; TODO (adapt error message with cause)
 
