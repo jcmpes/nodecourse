@@ -11,7 +11,9 @@ jobs:
   build:
 
     runs-on: self-hosted
-
+    env:
+      MONGODB_CONNECTION_STR: ${{ secrets.MONGODB_CONNECTION_STR }}
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
     strategy:
       matrix:
         node-version: [14.x]
@@ -24,9 +26,6 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-      env:
-        GITHUB_MONGODB_CONNECTION_STR: ${{ secrets.MONGODB_CONNECTION_STR }}
-        GITHUB_JWT_SECRET: ${{ secrets.JWT_SECRET }}
     - run: npm i
     #- run: npm test
     - run: sudo systemctl reload supervisor
