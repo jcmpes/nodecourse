@@ -6,8 +6,6 @@ name: Node.js CI
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
 
 jobs:
   build:
@@ -27,5 +25,12 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - run: npm i
+      env:
+        MONGODB_CONNECTION_STR = mongodb+srv://project_user:jdheyhrf73@cluster0.jgvs2.mongodb.net/proyectoFinal
+        JWT_SECRET = verySecret
+        USER_EMAIL = email@email.com
+        USER_PASSWORD = 1234
+        EMAIL_SENDINBLUE_ACCOUNT = email@email.com
+        SENDINBLUE_SMTP_KEY = ******
     #- run: npm test
     - run: sudo systemctl reload supervisor
