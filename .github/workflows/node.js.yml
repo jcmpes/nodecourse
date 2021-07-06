@@ -25,8 +25,8 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
       env:
-        MONGODB_CONNECTION_STR: ${{ secrets.MONGODB_CONNECTION_STR }}
-        JWT_SECRET: ${{ secrets.JWT_SECRET }}
+        GITHUB_MONGODB_CONNECTION_STR: ${{ secrets.MONGODB_CONNECTION_STR }}
+        GITHUB_JWT_SECRET: ${{ secrets.JWT_SECRET }}
     - run: npm i
     #- run: npm test
     - run: sudo systemctl reload supervisor
