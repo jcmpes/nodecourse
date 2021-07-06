@@ -11,9 +11,6 @@ jobs:
   build:
 
     runs-on: self-hosted
-    env:
-      MONGODB_CONNECTION_STR: ${{ secrets.MONGODB_CONNECTION_STR }}
-      JWT_SECRET: ${{ secrets.JWT_SECRET }}
     strategy:
       matrix:
         node-version: [14.x]
@@ -22,6 +19,9 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Use Node.js ${{ matrix.node-version }}
+      env:
+        MONGODB_CONNECTION_STR: ${{ secrets.MONGODB_CONNECTION_STR }}
+        JWT_SECRET: ${{ secrets.JWT_SECRET }}
       uses: actions/setup-node@v2
       with:
         node-version: ${{ matrix.node-version }}
