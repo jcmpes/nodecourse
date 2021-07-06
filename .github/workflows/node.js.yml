@@ -22,6 +22,12 @@ jobs:
         touch .env
         echo MONGODB_CONNECTION_STR=${{ secrets.MONGODB_CONNECTION_STR }} >> .env
         echo JWT_SECRET=${{ secrets.JWT_SECRET }} >> .env
+        echo USER_EMAIL=${{ secrets.USER_EMAIL }} >> .env
+        echo USER_PASSWORD=${{ secrets.USER_PASSWORD }} >> .env
+        echo EMAIL_SENDINBLUE_ACCOUNT=${{ secrets.EMAIL_SENDINBLUE_ACCOUNT }} >> .env
+        echo SENDINBLUE_SMTP_KEY=${{ secrets.SENDINBLUE_SMTP_KEY }} >> .env
+        echo FRONTEND_URL=${{ secrets.FRONTEND_URL }} >> .env
+        
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v2
       with:
