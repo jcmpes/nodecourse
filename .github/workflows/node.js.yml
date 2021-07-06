@@ -9,9 +9,6 @@ on:
 
 jobs:
   build:
-    env:
-      MONGODB_CONNECTION_STR: ${{ secrets.MONGODB_CONNECTION_STR }}
-      JWT_SECRET: ${{ secrets.JWT_SECRET }}
     runs-on: self-hosted
     strategy:
       matrix:
@@ -20,6 +17,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - name: Create .env file
+      run: |
+        touch .env
+        echo MONGODB_CONNECTION_STR=${{ secrets.MONGODB_CONNECTION_STR }} >> .env
+        echo JWT_SECRET=${{ secrets.JWT_SECRET }} >> .env
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v2
       with:
