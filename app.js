@@ -5,7 +5,6 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const cors = require('cors');
 const loginController = require('./controllers/loginController');
-const cors = require('cors');
 const registerController = require('./controllers/registerController');
 const forgotPasswordController = require('./controllers/forgotPasswordController');
 const resetPasswordController = require('./controllers/resetPasswordController');
