@@ -1,5 +1,7 @@
 'use strict';
 
+const generator = require('generate-api-key');
+
 const sendEmail = require('../lib/mailing');
 // eslint-disable-next-line no-unused-vars
 const { User } = require('../models');
@@ -11,12 +13,15 @@ class RegisterController {
   async register(req, res, next) {
     try {
       const { email, password, username } = req.body;
-
+      const verifyToken = generator();
       const result = await User.insertMany([
         {
           email,
           password: await User.hashPassword(password),
           username,
+          activated: false,
+          verifyToken,
+          verifyTokenExpires: Date.now() + 3600000,
         },
       ]);
       const mailObj = {
@@ -24,12 +29,16 @@ class RegisterController {
         subject: `Welcome, ${username}`,
         recipients: ['usuario616@gmail.com'], // <--- For Development (change to desired recepter)
         // recipients: [email], // <--------------------- For Production
-        message: `Welcome, ${username}<br>Please, confirm your email account.`,
+        message: `Welcome, ${username}<br>Please, confirm your email account following this link:<br>
+        <a href='${process.env.FRONTEND_URL}/reset/${verifyToken}'>${process.env.FRONTEND_URL}/verify/${verifyToken}</a></a>.`,
       };
       //TODO: Make it a verification mail
       sendEmail(mailObj);
 
-      res.json({ success: true, message: `user created` });
+      res.json({
+        success: true,
+        message: `A mail has been sent to you. Please, follow the link provided to confirm your email account.`,
+      });
     } catch (err) {
       //err.message = ''; TODO (adapt error message with cause)
 

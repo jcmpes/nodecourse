@@ -7,6 +7,7 @@ const cors = require('cors');
 const loginController = require('./controllers/loginController');
 const cors = require('cors');
 const registerController = require('./controllers/registerController');
+const verifyController = require('./controllers/verifyController');
 const forgotPasswordController = require('./controllers/forgotPasswordController');
 const resetPasswordController = require('./controllers/resetPasswordController');
 
@@ -28,6 +29,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // API
 app.post('/api/v1/register', registerController.register);
+app.post('/api/v1/verify', verifyController.verify);
 app.post('/api/v1/loginJWT', loginController.postJWT);
 app.post('/api/v1/forgot', forgotPasswordController.forgot);
 app.post('/api/v1/reset', resetPasswordController.reset);
