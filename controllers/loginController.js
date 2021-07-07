@@ -30,7 +30,7 @@ class LoginController {
             return;
           }
 
-          res.json({ token: jwtToken, displayName: usuario.username, test: 'test1' });
+          res.json({ token: jwtToken, displayName: usuario.username });
         }
       );
     } catch (err) {
