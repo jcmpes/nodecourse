@@ -27,10 +27,10 @@ class RegisterController {
       const mailObj = {
         from: 'confirm@nodecourse.com',
         subject: `Welcome, ${username}`,
-        recipients: ['usuario616@gmail.com'], // <--- For Development (change to desired recepter)
+        recipients: ['oscar.corb@gmail.com'], // <--- For Development (change to desired recepter)
         // recipients: [email], // <--------------------- For Production
         message: `Welcome, ${username}<br>Please, confirm your email account following this link:<br>
-        <a href='${process.env.FRONTEND_URL}/reset/${verifyToken}'>${process.env.FRONTEND_URL}/verify/${verifyToken}</a></a>.`,
+        <a href='${process.env.FRONTEND_URL}/reset-password/${verifyToken}'>${process.env.FRONTEND_URL}/verify/${verifyToken}</a></a>.`,
       };
       //TODO: Make it a verification mail
       sendEmail(mailObj);
