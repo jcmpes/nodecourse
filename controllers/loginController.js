@@ -13,8 +13,14 @@ class LoginController {
 
       const usuario = await User.findOne({ email });
 
-      if (!usuario || !(await usuario.comparePassword(password))) {
-        const error = new Error('invalid credentials');
+      if (
+        !usuario ||
+        !usuario.activated ||
+        !(await usuario.comparePassword(password))
+      ) {
+        const error = new Error(
+          'invalid credentials or email account not verified'
+        );
         error.status = 401;
         next(error);
         return;

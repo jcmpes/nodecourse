@@ -9,6 +9,9 @@ const usuarioSchema = mongoose.Schema({
   username: { type: String, unique: true },
   resetPasswordToken: String,
   resetPasswordTokenExpires: Date,
+  activated: Boolean,
+  verifyToken: String,
+  verifyTokenExpires: Date,
 });
 
 usuarioSchema.statics.hashPassword = function (plainPassword) {

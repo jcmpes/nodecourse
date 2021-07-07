@@ -16,10 +16,9 @@ class ForgotPasswordController {
       const usuario = await User.findOne({ email });
 
       if (!usuario) {
-        res.status(404).send({ message: `There is not such email in database` });
+        res.err({ message: `There is not such email in database` });
       } else {
         const randomToken = generator();
-        console.log(randomToken);
         const result = await User.updateOne(
           { email },
           {
