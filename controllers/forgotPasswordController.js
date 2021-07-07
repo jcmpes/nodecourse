@@ -29,9 +29,9 @@ class ForgotPasswordController {
         const mailObj = {
           from: 'forgot-password@nodecourse.com',
           subject: `Reset password`,
-          recipients: ['usuario616@gmail.com'], // <--- For Development (change to desired recepter)
+          recipients: ['oscar.corb@gmail.com'], // <--- For Development (change to desired recepter)
           // recipients: [email], // <--------------------- For Production
-          message: `Here is your pasword reset link<br><a href='${process.env.FRONTEND_URL}/reset/${randomToken}'>localhost:3001/reset/${randomToken}</a></a>.`,
+          message: `Here is your pasword reset link<br><a href='${process.env.FRONTEND_URL}/reset-password/${randomToken}'>localhost:3001/reset-password/${randomToken}</a></a>.`,
         };
         //TODO: Make it a verification mail
         sendEmail(mailObj);

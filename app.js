@@ -30,8 +30,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.post('/api/v1/register', registerController.register);
 app.post('/api/v1/verify', verifyController.verify);
 app.post('/api/v1/loginJWT', loginController.postJWT);
-app.post('/api/v1/forgot', forgotPasswordController.forgot);
-app.post('/api/v1/reset', resetPasswordController.reset);
+app.post('/api/v1/forgot-password', forgotPasswordController.forgot);
+app.post('/api/v1/reset-password', resetPasswordController.reset);
 
 //app.use('/api/v1/courses', require('./routes/api/courses'));
 
