@@ -32,8 +32,6 @@ class ResetPasswordController {
         res.json({ success: true, message: `Password updated` });
       }
     } catch (err) {
-      //err.message = ''; TODO (adapt error message with cause)
-
       next(err);
     }
   }

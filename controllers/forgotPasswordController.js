@@ -39,8 +39,6 @@ class ForgotPasswordController {
         res.json({ success: true, message: `Reset link sent to user` });
       }
     } catch (err) {
-      //err.message = ''; TODO (adapt error message with cause)
-
       next(err);
     }
   }

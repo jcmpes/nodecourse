@@ -40,7 +40,17 @@ class RegisterController {
         message: `A mail has been sent to you. Please, follow the link provided to confirm your email account.`,
       });
     } catch (err) {
-      //err.message = ''; TODO (adapt error message with cause)
+      if (
+        err.message.indexOf('E11000') != -1 &&
+        err.message.indexOf('email') != -1
+      ) {
+        err.message = 'eMail already registered';
+      } else if (
+        err.message.indexOf('E11000') != -1 &&
+        err.message.indexOf('username') != -1
+      ) {
+        err.message = 'username already taken';
+      }
 
       next(err);
     }
