@@ -13,7 +13,7 @@ class RegisterController {
   async register(req, res, next) {
     try {
       const { email, password, username } = req.body;
-      const verifyToken = generator({ method: 'bytes' });
+      const verifyToken = generator({ method: 'bytes', length: 24 });
       const result = await User.insertMany([
         {
           email,
