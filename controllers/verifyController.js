@@ -2,19 +2,18 @@
 
 // eslint-disable-next-line no-unused-vars
 const { User } = require('../models');
-const generator = require('generate-api-key');
 
 class verifyController {
   /**
-   * POST /verify acount
+   * GET /verify acount
    */
   async verify(req, res, next) {
+    const verifyToken = req.query.vt;
+    console.log('El token es: ' + verifyToken)
     try {
-      const { verifyToken } = req.body;
-
       const usuario = await User.findOne({ verifyToken });
       if (!usuario || Date.now() - usuario.verifyTokenTokenExpires > 3600000) {
-        res.json({ message: `The token provided is invalid or has expired` });
+        res.status(401).json({ message: `The token provided is invalid or has expired` });
       } else {
         const result = await User.updateOne(
           { verifyToken },
@@ -25,7 +24,7 @@ class verifyController {
           }
         );
 
-        res.json({
+        res.status(200).json({
           success: true,
           message: `eMail verified and account activated`,
         });
