@@ -28,7 +28,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // API
 app.post('/api/v1/register', registerController.register);
-app.post('/api/v1/verify', verifyController.verify);
+app.get('/api/v1/verify', verifyController.verify);
 app.post('/api/v1/loginJWT', loginController.postJWT);
 app.post('/api/v1/forgot-password', forgotPasswordController.forgot);
 app.post('/api/v1/reset-password', resetPasswordController.reset);
