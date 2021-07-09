@@ -24,7 +24,7 @@ class RegisterController {
           verifyTokenExpires: Date.now() + 3600000,
         },
       ]);
-      const address = `${process.env.FRONTEND_URL}/verify/${verifyToken}`;
+      const address = `${process.env.FRONTEND_URL}verify/${verifyToken}`;
       const mailObj = {
         from: 'confirm@nodecourse.com',
         subject: `Welcome, ${username}`,
