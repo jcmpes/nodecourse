@@ -13,7 +13,7 @@ class verifyController {
     try {
       const usuario = await User.findOne({ verifyToken });
       if (!usuario || Date.now() - usuario.verifyTokenTokenExpires > 3600000) {
-        res.json({ message: `The token provided is invalid or has expired` });
+        res.status(401).json({ message: `The token provided is invalid or has expired` });
       } else {
         const result = await User.updateOne(
           { verifyToken },
@@ -24,7 +24,7 @@ class verifyController {
           }
         );
 
-        res.json({
+        res.status(200).json({
           success: true,
           message: `eMail verified and account activated`,
         });
