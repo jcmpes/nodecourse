@@ -1,6 +1,5 @@
 'use strict';
 const { User } = require('../models');
-const { findOneAndDelete } = require('../models/User');
 
 class DeleteUserController {
   /**
@@ -13,7 +12,7 @@ class DeleteUserController {
       if (user) {
         const passwordsMatch = await user.comparePassword(password);
         if (passwordsMatch) {
-          await User.findOneAndDelete({ email: email });
+          await User.findOneAndDelete({ email });
           res.json({ deleted: true });
         }
       }
