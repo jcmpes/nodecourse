@@ -27,7 +27,7 @@ class verifyController {
 
         res.json({
           success: true,
-          message: `eMail verified and account activated`,
+          message: `email verified and account activated`,
         });
       }
     } catch (err) {
