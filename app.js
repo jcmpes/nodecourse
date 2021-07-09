@@ -7,6 +7,7 @@ const cors = require('cors');
 const loginController = require('./controllers/loginController');
 const registerController = require('./controllers/registerController');
 const verifyController = require('./controllers/verifyController');
+const deleteUserController = require('./controllers/deleteUserController');
 const forgotPasswordController = require('./controllers/forgotPasswordController');
 const resetPasswordController = require('./controllers/resetPasswordController');
 
@@ -28,6 +29,7 @@ app.get('/api/v1/verify', verifyController.verify);
 app.post('/api/v1/loginJWT', loginController.postJWT);
 app.post('/api/v1/forgot-password', forgotPasswordController.forgot);
 app.post('/api/v1/reset-password', resetPasswordController.reset);
+app.post('/api/v1/delete-user', deleteUserController.delete);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

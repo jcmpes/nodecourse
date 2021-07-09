@@ -31,21 +31,21 @@ class RegisterController {
         // recipients: ['oscar.corb@gmail.com'], // <--- For Development (change to desired recepter)
         recipients: [email], // <--------------------- For Production
         message: `Welcome, ${username}<br>Please, confirm your email account following this link:<br>
-        <a href=${address}>${address}</a>`,
+        <a href='${process.env.FRONTEND_URL}/verify/${verifyToken}'>${process.env.FRONTEND_URL}/verify/${verifyToken}</a>`,
       };
       //TODO: Make it a verification mail
       sendEmail(mailObj);
 
       res.json({
         success: true,
-        message: `A mail has been sent to you. Please, follow the link provided to confirm your email account.`,
+        message: `An email has been sent to you. Please, follow the link provided to confirm your email account.`,
       });
     } catch (err) {
       if (
         err.message.indexOf('E11000') != -1 &&
         err.message.indexOf('email') != -1
       ) {
-        err.message = 'eMail already registered';
+        err.message = 'email already registered';
       } else if (
         err.message.indexOf('E11000') != -1 &&
         err.message.indexOf('username') != -1
