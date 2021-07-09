@@ -19,7 +19,10 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// API
+//API GET
+app.use('/api/v1/aboutme', require('./controllers/aboutMeController'));
+
+// API POST
 app.post('/api/v1/register', registerController.register);
 app.get('/api/v1/verify', verifyController.verify);
 app.post('/api/v1/loginJWT', loginController.postJWT);
