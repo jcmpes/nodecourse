@@ -13,7 +13,7 @@ class RegisterController {
   async register(req, res, next) {
     try {
       const { email, password, username } = req.body;
-      const verifyToken = generator();
+      const verifyToken = generator({ method: 'bytes', length: 24 });
       const result = await User.insertMany([
         {
           email,
@@ -24,13 +24,14 @@ class RegisterController {
           verifyTokenExpires: Date.now() + 3600000,
         },
       ]);
+      const address = `${process.env.FRONTEND_URL}/verify/${verifyToken}`;
       const mailObj = {
         from: 'confirm@nodecourse.com',
         subject: `Welcome, ${username}`,
-        recipients: ['oscar.corb@gmail.com'], // <--- For Development (change to desired recepter)
-        // recipients: [email], // <--------------------- For Production
+        // recipients: ['oscar.corb@gmail.com'], // <--- For Development (change to desired recepter)
+        recipients: [email], // <--------------------- For Production
         message: `Welcome, ${username}<br>Please, confirm your email account following this link:<br>
-        <a href='${process.env.FRONTEND_URL}/verify/${verifyToken}'>${process.env.FRONTEND_URL}/verify/${verifyToken}</a></a>.`,
+        <a href='${process.env.FRONTEND_URL}/verify/${verifyToken}'>${process.env.FRONTEND_URL}/verify/${verifyToken}</a>`,
       };
       //TODO: Make it a verification mail
       sendEmail(mailObj);

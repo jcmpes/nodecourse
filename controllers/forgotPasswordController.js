@@ -26,12 +26,13 @@ class ForgotPasswordController {
             resetPasswordTokenExpires: Date.now() + 3600000,
           }
         );
+        const address = `${process.env.FRONTEND_URL}/reset-password/${randomToken}` 
         const mailObj = {
           from: 'forgot-password@nodecourse.com',
           subject: `Reset password`,
           recipients: ['oscar.corb@gmail.com'], // <--- For Development (change to desired recepter)
           // recipients: [email], // <--------------------- For Production
-          message: `Here is your pasword reset link<br><a href='${process.env.FRONTEND_URL}/reset-password/${randomToken}'>localhost:3001/reset-password/${randomToken}</a></a>.`,
+          message: `Here is your password reset link<br><a href=${address}>${address}</a>.`,
         };
         //TODO: Make it a verification mail
         sendEmail(mailObj);
