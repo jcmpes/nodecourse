@@ -2,16 +2,16 @@
 
 const mongoose = require('mongoose');
 
-const usuarioSchema = mongoose.Schema({
+const categoriaSchema = mongoose.Schema({
   name: String,
   description: String,
   slug: String,
-  courses: {
+  courses: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: "Curso"
-  }
+  }]
 });
 
-const Usuario = mongoose.model('User', usuarioSchema);
+const Categoria = mongoose.model('Category', categoriaSchema);
 
-module.exports = Usuario;
+module.exports = Categoria;

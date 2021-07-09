@@ -16,7 +16,8 @@ const CursoSchema = mongoose.Schema({
   description: String,
   content: String,
   createdAt: Date,
-
 });
 
-module.exports = mongoose.model("Curso", CursoSchema);
+const Curso = mongoose.model('Curso', CursoSchema);
+
+module.exports = Curso;
