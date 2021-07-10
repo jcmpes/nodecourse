@@ -17,8 +17,8 @@ main().catch((err) => console.error(err));
 
 async function main() {
   // await initUsers();
-  await initCourses();
   await initCategories();
+  await initCourses();
   mongoose.connection.close();
 }
 
@@ -55,7 +55,9 @@ async function initCourses() {
 
   const result = await Course.insertMany([
     {
-      title: 'Curso 1',
+      title: 'Curso 11',
+      user: await User.findOne({}),
+      category: await Category.findOne({}),
       featuredImage: '',
       video: 'https://youtu.be/rfscVS0vtbw',
       description: 'This is description for course 1',
@@ -64,10 +66,22 @@ async function initCourses() {
     },
     {
       title: 'Curso 2',
+      user: await User.findOne({}),
+      category: await Category.findOne({}),
       featuredImage: '',
       video: 'https://youtu.be/rfscVS0vtbw',
-      description: 'This is description for course 1',
-      content: 'This is the content fo course 1',
+      description: 'This is description for course 2',
+      content: 'This is the content fo course 2',
+      createdAt: Date.now(),
+    },
+    {
+      title: 'Curso 3',
+      user: await User.findOne({}),
+      category: await Category.findOne({}),
+      featuredImage: '',
+      video: 'https://youtu.be/rfscVS0vtbw',
+      description: 'This is description for course 3',
+      content: 'This is the content fo course 3',
       createdAt: Date.now(),
     },
   ]);
@@ -81,7 +95,7 @@ async function initCourses() {
 async function initCategories() {
   const { deletedCount } = await Category.deleteMany();
   console.log(
-    `Eliminado${deletedCount !== 1 ? 's' : ''} ${deletedCount} categoria${
+    `Eliminada${deletedCount !== 1 ? 's' : ''} ${deletedCount} categoria${
       deletedCount !== 1 ? 's' : ''
     }.`,
   );
@@ -93,9 +107,27 @@ async function initCategories() {
       slug: 'categoria-1',
       courses: [],
     },
+    {
+      name: 'Categoria 2',
+      description: 'This is the description of Categoria 2',
+      slug: 'categoria-2',
+      courses: [],
+    },
+    {
+      name: 'Categoria 2',
+      description: 'This is the description of Categoria 2',
+      slug: 'categoria-2',
+      courses: [],
+    },
+    {
+      name: 'Categoria 3',
+      description: 'This is the description of Categoria 3',
+      slug: 'categoria-3',
+      courses: [],
+    },
   ]);
   console.log(
-    `Insertado${result.length !== 1 ? 's' : ''} ${result.length} categoria${
+    `Insertada${result.length !== 1 ? 's' : ''} ${result.length} categoria${
       result.length !== 1 ? 's' : ''
     }.`,
   );

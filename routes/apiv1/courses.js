@@ -5,6 +5,8 @@ const router = express.Router();
 const mongoose = require('mongoose');
 
 const Course = mongoose.model('Course');
+const User = mongoose.model('User');
+const Category = mongoose.model('Category');
 
 /**
  * GET /api/v1/courses
@@ -21,9 +23,24 @@ router.get('/', async function (req, res, next) {
     const limit = parseInt(req.query.limit) || 100;
     const skip = parseInt(req.query.skip) || 0;
     const sort = req.query.sort || 'createdAt';
-
     const result = await Course.list(skip, limit, sort);
-    res.json(result);
+
+    const resultWithAuthor = await Promise.all(
+      result.map(async (course) => {
+        const author = await User.findOne({ _id: course.user });
+        const category = await Category.findOne({ _id: course.category });
+        const courseWithAuthorAndCategory = {
+          _id: course._id,
+          title: course.title,
+          createdAt: course.createdAt,
+          description: course.description,
+          authorName: author.username,
+          categoryName: category.name,
+        };
+        return courseWithAuthorAndCategory;
+      }),
+    );
+    res.json(resultWithAuthor);
   } catch (error) {
     next(err);
   }
