@@ -50,6 +50,15 @@ async function initCourses() {
   const result = await Course.insertMany([
     {
       title: "Curso 1",
+      featuredImage: "",
+      video: "https://youtu.be/rfscVS0vtbw",
+      description: "This is description for course 1",
+      content: "This is the content fo course 1",
+      createdAt: Date.now()
+    },
+    {
+      title: "Curso 2",
+      featuredImage: "",
       video: "https://youtu.be/rfscVS0vtbw",
       description: "This is description for course 1",
       content: "This is the content fo course 1",

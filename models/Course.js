@@ -12,17 +12,18 @@ const courseSchema = mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Category"
   },
+  featuredImage: String,
   video: String,
   description: String,
   content: String,
   createdAt: Date,
 });
 
-courseSchema.statics.list = async function(limit, skip, sort) {
+courseSchema.statics.list = async function(skip, limit, sort) {
   const query = Course.find();
-  query.limit(limit);
-  query.skip(skip);
   query.sort(sort);
+  query.skip(skip);
+  query.limit(limit);
 
   return await query.exec();
 }
