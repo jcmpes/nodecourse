@@ -31,6 +31,9 @@ app.post('/api/v1/forgot-password', forgotPasswordController.forgot);
 app.post('/api/v1/reset-password', resetPasswordController.reset);
 app.post('/api/v1/delete-user', deleteUserController.delete);
 
+// API courses
+app.use('/api/v1/courses', require('./routes/apiv1/courses'));
+
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));

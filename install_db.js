@@ -10,7 +10,7 @@ const { mongoose, connectMongoose, User, Course, Category } = require('./models'
 main().catch(err => console.error(err));
 
 async function main() {
-  await initUsers();
+  // await initUsers();
   await initCourses();
   await initCategories();
   mongoose.connection.close();
