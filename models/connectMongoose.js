@@ -4,7 +4,7 @@ require('dotenv').config();
 
 const mongoose = require('mongoose');
 
-mongoose.connection.on('error', err => {
+mongoose.connection.on('error', (err) => {
   console.log('Error de conexión', err);
   process.exit(1);
 });

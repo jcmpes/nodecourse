@@ -19,7 +19,7 @@ class LoginController {
         !(await usuario.comparePassword(password))
       ) {
         const error = new Error(
-          'invalid credentials or email account not verified'
+          'invalid credentials or email account not verified',
         );
         error.status = 401;
         next(error);
@@ -37,7 +37,7 @@ class LoginController {
           }
 
           res.json({ token: jwtToken, displayName: usuario.username });
-        }
+        },
       );
     } catch (err) {
       next(err);

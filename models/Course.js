@@ -6,11 +6,11 @@ const courseSchema = mongoose.Schema({
   title: { type: String, unique: true },
   user: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User"
+    ref: 'User',
   },
   category: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Category"
+    ref: 'Category',
   },
   featuredImage: String,
   video: String,
@@ -19,14 +19,14 @@ const courseSchema = mongoose.Schema({
   createdAt: Date,
 });
 
-courseSchema.statics.list = async function(skip, limit, sort) {
+courseSchema.statics.list = async function (skip, limit, sort) {
   const query = Course.find();
   query.sort(sort);
   query.skip(skip);
   query.limit(limit);
 
   return await query.exec();
-}
+};
 
 const Course = mongoose.model('Course', courseSchema);
 
