@@ -6,7 +6,10 @@ const mongoose = require('mongoose');
 
 const Course = mongoose.model('Course');
 
-// Return the list of courses
+/**
+ * GET /api/v1/courses 
+ * Return list of courses
+ */
 router.get('/', async function(req, res, next) {
   try {
     const limit = parseInt(req.query.start) || 100;
@@ -17,6 +20,52 @@ router.get('/', async function(req, res, next) {
     res.json(result);
   } catch (error) {
     next(err)
+  }
+});
+
+/**
+ * GET /api/v1/courses/:id 
+ * Return detail of a course
+ */
+router.get('/:id', async function(req, res, next) {
+  try {
+    const _id = req.params.id;
+    const course = await Course.findOne({ _id });
+    if (!course) {
+      return res.status(404).json({ error: 'not found' });
+    }
+    res.json({ result: course });
+  } catch (err) {
+    next(err);
+  }
+})
+
+/**
+ * POST /api/v1/courses 
+ * Create a new course
+ */
+router.post('/', async function(req, res, next) {
+  try {
+    const courseData = req.body;
+    const course = new Course(courseData);
+    const newCourse = await course.save();
+    res.status(201).json({ result: newCourse});
+  } catch (err) {
+    next(err); 
+  }
+})
+
+/**
+ * DELETE /api/v1/courses/:id
+ * Delete an existing course
+ */
+router.delete('/:id', async function(req, res, next) {
+  try {
+    const _id = req.params.id;
+    await Course.deleteOne({ _id });
+    res.json();
+  } catch (err) {
+    next(err);
   }
 });
 
