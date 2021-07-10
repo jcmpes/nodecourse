@@ -26,7 +26,7 @@ class ResetPasswordController {
             password: newPasswordHashed,
             resetPasswordToken: undefined,
             resetPasswordTokenExpires: undefined,
-          }
+          },
         );
 
         res.json({ success: true, message: `Password updated` });

@@ -24,9 +24,9 @@ class ForgotPasswordController {
           {
             resetPasswordToken: randomToken,
             resetPasswordTokenExpires: Date.now() + 3600000,
-          }
+          },
         );
-        const address = `${process.env.FRONTEND_URL}/reset-password/${randomToken}` 
+        const address = `${process.env.FRONTEND_URL}/reset-password/${randomToken}`;
         const mailObj = {
           from: 'forgot-password@nodecourse.com',
           subject: `Reset password`,
