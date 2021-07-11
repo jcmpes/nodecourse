@@ -40,7 +40,7 @@ router.get('/:id', async function(req, res, next) {
     if (!course) {
       return res.status(404).json({ error: 'not found' });
     }
-    res.json({ result: course });
+    res.json(course);
   } catch (err) {
     next(err);
   }
