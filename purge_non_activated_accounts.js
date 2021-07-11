@@ -18,6 +18,6 @@ async function purgeNonActivated() {
   console.log(
     `Eliminado${deletedCount !== 1 ? 's' : ''} ${deletedCount} usuario${
       deletedCount !== 1 ? 's' : ''
-    } inactivos.`,
+    } inactivo${deletedCount !== 1 ? 's' : ''}.`,
   );
 }
