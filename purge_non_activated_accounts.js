@@ -1,4 +1,6 @@
 'use strict';
+require('dotenv').config();
+
 const { mongoose, User } = require('./models');
 
 main().catch((err) => console.error(err));
