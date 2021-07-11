@@ -5,6 +5,8 @@ const router = express.Router();
 const mongoose = require('mongoose');
 
 const Course = mongoose.model('Course');
+const User = mongoose.model('User');
+const Category = mongoose.model('Category');
 
 /**
  * GET /api/v1/courses
@@ -21,7 +23,6 @@ router.get('/', async function (req, res, next) {
     const limit = parseInt(req.query.limit) || 100;
     const skip = parseInt(req.query.skip) || 0;
     const sort = req.query.sort || 'createdAt';
-
     const result = await Course.list(skip, limit, sort);
     res.json(result);
   } catch (error) {
