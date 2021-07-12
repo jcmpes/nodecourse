@@ -33,9 +33,8 @@ router.get('/isfav', jwtAuth, async function (req, res, next) {
     const user = req.apiAuthUserId;
     const { course } = req.body;
     const isFav = await Favorite.findOne({ user, course });
-
     if (!isFav) {
-      return res.json({ return: false });
+      return res.json({ result: false });
     }
     res.json({ result: true });
   } catch (err) {
