@@ -16,8 +16,8 @@ const {
 main().catch((err) => console.error(err));
 
 async function main() {
-  // await initUsers();
-  // await initCategories();
+  await initUsers();
+  await initCategories();
   await initCourses();
   mongoose.connection.close();
 }
@@ -60,7 +60,7 @@ async function initCourses() {
       user: await User.findOne({}),
       category: await Category.findOne({}),
       featuredImage: '',
-      video: 'https://youtu.be/rfscVS0vtbw',
+      video: 'https://www.youtube.com/embed/rfscVS0vtbw',
       description: 'This is description for course 1',
       content: 'This is the content fo course 1',
       createdAt: Date.now(),
@@ -71,7 +71,7 @@ async function initCourses() {
       user: await User.findOne({}),
       category: await Category.findOne({}),
       featuredImage: '',
-      video: 'https://youtu.be/rfscVS0vtbw',
+      video: 'https://www.youtube.com/embed/OXE2a8dqIAI',
       description: 'This is description for course 2',
       content: 'This is the content fo course 2',
       createdAt: Date.now(),
@@ -82,7 +82,7 @@ async function initCourses() {
       user: await User.findOne({}),
       category: await Category.findOne({}),
       featuredImage: '',
-      video: 'https://youtu.be/rfscVS0vtbw',
+      video: 'https://www.youtube.com/embed/Kyx2PsuwomE',
       description: 'This is description for course 3',
       content: 'This is the content fo course 3',
       createdAt: Date.now(),
