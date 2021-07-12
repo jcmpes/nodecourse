@@ -3,5 +3,6 @@ module.exports = {
   User: require('./User'),
   Course: require('./Course'),
   Category: require('./Category'),
+  Favorite: require('./Favorite'),
   mongoose: require('mongoose'),
 };

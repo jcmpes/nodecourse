@@ -21,7 +21,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 //API GET
-app.use('/api/v1/aboutme', require('./controllers/aboutMeController'));
+app.use('/api/v1/aboutme', require('./routes/apiv1/aboutme'));
 
 // API POST
 app.post('/api/v1/register', registerController.register);
