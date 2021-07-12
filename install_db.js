@@ -17,7 +17,7 @@ main().catch((err) => console.error(err));
 
 async function main() {
   // await initUsers();
-  await initCategories();
+  // await initCategories();
   await initCourses();
   mongoose.connection.close();
 }
@@ -56,6 +56,7 @@ async function initCourses() {
   const result = await Course.insertMany([
     {
       title: 'Curso 11',
+      slug: 'curso-11',
       user: await User.findOne({}),
       category: await Category.findOne({}),
       featuredImage: '',
@@ -66,6 +67,7 @@ async function initCourses() {
     },
     {
       title: 'Curso 2',
+      slug: 'curso-2',
       user: await User.findOne({}),
       category: await Category.findOne({}),
       featuredImage: '',
@@ -76,6 +78,7 @@ async function initCourses() {
     },
     {
       title: 'Curso 3',
+      slug: 'curso-3',
       user: await User.findOne({}),
       category: await Category.findOne({}),
       featuredImage: '',

@@ -31,13 +31,13 @@ router.get('/', async function (req, res, next) {
 });
 
 /**
- * GET /api/v1/courses/:id
- * Return detail of a course
+ * GET /api/v1/courses/:slug
+ * Return detail of a course by it slug
  */
-router.get('/:id', async function (req, res, next) {
+router.get('/:slug', async function(req, res, next) {
   try {
-    const _id = req.params.id;
-    const course = await Course.findOne({ _id });
+    const slug = req.params.slug;
+    const course = await Course.findOne({ slug });
     if (!course) {
       return res.status(404).json({ error: 'not found' });
     }
@@ -45,7 +45,7 @@ router.get('/:id', async function (req, res, next) {
   } catch (err) {
     next(err);
   }
-});
+})
 
 /**
  * POST /api/v1/courses
