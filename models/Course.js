@@ -1,9 +1,14 @@
 'use strict';
 
 const mongoose = require('mongoose');
+// Import the slug package
+const slug = require('mongoose-slug-generator');
+// Initialize
+mongoose.plugin(slug);
 
 const courseSchema = mongoose.Schema({
   title: { type: String, unique: true },
+  slug: { type: String, slug: "title" },
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
