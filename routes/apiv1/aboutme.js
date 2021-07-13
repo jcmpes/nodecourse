@@ -27,6 +27,24 @@ router.get('/isfav/:course', jwtAuth, async function (req, res, next) {
 });
 
 /**
+ * Receives a course id and returns wether
+ * it's favorited by the user or not
+ *
+ * /api/v1/aboutme/isfav?course=60eaf69703f0a106fc605627
+ */
+router.get('/myfavs', jwtAuth, async function (req, res, next) {
+  try {
+    const user = req.apiAuthUserId;
+    const isFav = await Favorite.find({ user });
+    const favs = isFav.map((fav) => fav.course);
+
+    res.json({ favs });
+  } catch (err) {
+    next(err);
+  }
+});
+
+/**
 
  */
 router.get('/', jwtAuth, async function (req, res, next) {
