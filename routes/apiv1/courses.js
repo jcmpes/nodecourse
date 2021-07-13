@@ -54,6 +54,11 @@ router.get('/:slug', async function(req, res, next) {
 router.post('/', async function (req, res, next) {
   try {
     const courseData = req.body;
+    // Server side validation
+    if (!courseData.category || !courseData.user) {
+      res.status(400).json({ 'message': 'User and category are both required'});
+      return;
+    }
     const course = new Course(courseData);
     const newCourse = await course.save();
     res.status(201).json({ result: newCourse });
@@ -69,8 +74,8 @@ router.post('/', async function (req, res, next) {
 router.delete('/:id', async function (req, res, next) {
   try {
     const _id = req.params.id;
-    await Course.deleteOne({ _id });
-    res.json();
+    const deleted = await Course.deleteOne({ _id });
+    res.status(200).json({ deleted });
   } catch (err) {
     next(err);
   }
