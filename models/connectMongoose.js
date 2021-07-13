@@ -1,4 +1,5 @@
-'use strict';
+process.chdir('/Users/Andres/Documents/GitHub/nodecourse/');
+('use strict');
 
 require('dotenv').config();
 
