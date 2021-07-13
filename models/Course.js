@@ -21,8 +21,7 @@ const courseSchema = mongoose.Schema({
   video: String,
   description: String,
   content: String,
-  createdAt: Date,
-});
+}, { timestamps: true });
 
 courseSchema.statics.list = async function (skip, limit, sort) {
   const query = Course.find().populate('user').populate('category');
