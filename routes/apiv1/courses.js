@@ -20,10 +20,20 @@ const User = mongoose.model('User');
  */
 router.get('/', async function (req, res, next) {
   try {
+    const title = req.query.title;
+
     const limit = parseInt(req.query.limit) || 100;
     const skip = parseInt(req.query.skip) || 0;
     const sort = req.query.sort || 'createdAt';
-    const result = await Course.list(skip, limit, sort);
+
+    // empty filter
+    const filter = {};
+
+    if (title) {
+      filter.title = new RegExp('^' + title);
+    }
+
+    const result = await Course.list(filter, skip, limit, sort);
     res.json(result);
   } catch (error) {
     next(err);
@@ -34,7 +44,7 @@ router.get('/', async function (req, res, next) {
  * GET /api/v1/courses/:slug
  * Return detail of a course by it slug
  */
-router.get('/:slug', async function(req, res, next) {
+router.get('/:slug', async function (req, res, next) {
   try {
     const slug = req.params.slug;
     const course = await Course.findOne({ slug });
@@ -45,7 +55,7 @@ router.get('/:slug', async function(req, res, next) {
   } catch (err) {
     next(err);
   }
-})
+});
 
 /**
  * POST /api/v1/courses
@@ -56,7 +66,7 @@ router.post('/', async function (req, res, next) {
     const courseData = req.body;
     // Server side validation
     if (!courseData.category || !courseData.user) {
-      res.status(400).json({ 'message': 'User and category are both required'});
+      res.status(400).json({ message: 'User and category are both required' });
       return;
     }
     const course = new Course(courseData);
