@@ -61,7 +61,7 @@ router.post('/', async function (req, res, next) {
     }
     const course = new Course(courseData);
     const newCourse = await course.save();
-    res.status(201).json({ result: newCourse });
+    res.status(201).json(newCourse);
   } catch (err) {
     next(err);
   }
