@@ -4,9 +4,10 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 const Category = mongoose.model('Category');
-
 const Course = mongoose.model('Course');
 const User = mongoose.model('User');
+const jwtAuth = require('../../lib/jwAuth');
+
 
 /**
  * GET /api/v1/courses
@@ -61,14 +62,25 @@ router.get('/:slug', async function (req, res, next) {
  * POST /api/v1/courses
  * Create a new course
  */
-router.post('/', async function (req, res, next) {
+router.post('/', jwtAuth, async function (req, res, next) {
   try {
-    const courseData = req.body;
     // Server side validation
     if (!courseData.category || !courseData.user) {
       res.status(400).json({ message: 'User and category are both required' });
       return;
-    }
+    };
+
+    // Inject userId in new course before saving it
+    const courseData = req.body;
+    const { user } = courseData;
+    const publisher = await User.findOne({ username: user })
+    courseData.user = publisher._id;
+
+    // Verify identity of publisher
+    if (courseData.user !== req.apiAuthUserId) {
+      res.status(401).json({ message: 'Unauthorized' });
+    };
+
     const course = new Course(courseData);
     const newCourse = await course.save();
     res.status(201).json(newCourse);
