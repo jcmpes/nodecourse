@@ -3,10 +3,10 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
+const Category = mongoose.model('Category');
 
 const Course = mongoose.model('Course');
 const User = mongoose.model('User');
-const Category = mongoose.model('Category');
 
 /**
  * GET /api/v1/courses
