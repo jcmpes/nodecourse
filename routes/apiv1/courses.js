@@ -3,10 +3,10 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
+const Category = mongoose.model('Category');
 
 const Course = mongoose.model('Course');
 const User = mongoose.model('User');
-const Category = mongoose.model('Category');
 
 /**
  * GET /api/v1/courses
@@ -61,7 +61,7 @@ router.post('/', async function (req, res, next) {
     }
     const course = new Course(courseData);
     const newCourse = await course.save();
-    res.status(201).json({ result: newCourse });
+    res.status(201).json(newCourse);
   } catch (err) {
     next(err);
   }
