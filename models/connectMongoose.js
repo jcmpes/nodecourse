@@ -1,4 +1,3 @@
-process.chdir('/home/nodeapp/actions-runner/nodeapp/nodecourse/nodecourse');
 ('use strict');
 
 require('dotenv').config();
