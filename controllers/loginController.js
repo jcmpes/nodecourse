@@ -48,7 +48,9 @@ class LoginController {
       next(err);
     }
   }
-
+  /**
+   * POST /loginJWT with token
+   */
   async loginWithToken(req, res, next) {
     try {
       const { token } = req.body;
