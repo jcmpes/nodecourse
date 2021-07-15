@@ -78,7 +78,6 @@ router.post('/', jwtAuth, upload.single('image'), async function (req, res, next
     // Inject userId in new course before saving it
     const publisher = await User.findOne({ username: formData.user });
     formData.user = publisher._id;
-    console.log('courseData', formData);
     
     // Verify identity of publisher
     if (formData.user != req.apiAuthUserId) {
@@ -86,7 +85,12 @@ router.post('/', jwtAuth, upload.single('image'), async function (req, res, next
       return res.status(401).json({ message: 'Unauthorized' });
     };
 
+    // Save image name
+    const file = req.file;
     const course = new Course(formData);
+    course.image = file.filename;
+
+    // Save new course in database
     const newCourse = await course.save();
     res.status(201).json(newCourse);
   } catch (err) {
