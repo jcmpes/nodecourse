@@ -62,6 +62,25 @@ router.post('/newfav/:course', jwtAuth, async function (req, res, next) {
 });
 
 /**
+ * Receives a course id and returns wether
+ * it's favorited by the user or not
+ *
+ * /api/v1/aboutme/isfav?course=60eaf69703f0a106fc605627
+ */
+router.post('/removefav/:course', jwtAuth, async function (req, res, next) {
+  try {
+    const user = req.apiAuthUserId;
+    const course = req.params.course;
+    const favorite = await Favorite.findOne({ user, course });
+    console.log(favorite);
+    const { deletedCount } = await Favorite.deleteOne({ _id: favorite._id });
+    res.json({ success: deletedCount > 0 });
+  } catch (err) {
+    next(err);
+  }
+});
+
+/**
 
  */
 router.get('/', jwtAuth, async function (req, res, next) {
