@@ -42,9 +42,31 @@ class LoginController {
             displayName: usuario.username,
             favs,
           });
-
         },
       );
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async loginWithToken(req, res, next) {
+    try {
+      const { token } = req.body;
+
+      jwt.verify(token, process.env.JWT_SECRET, async (err, jwtToken) => {
+        if (err) {
+          next(err);
+          return;
+        }
+        const favorites = await Favorite.find({ user: jwtToken._id });
+        const favs = favorites.map((fav) => fav.course);
+
+        res.json({
+          loggedWithToken: true,
+          userID: jwtToken._id,
+          favs,
+        });
+      });
     } catch (err) {
       next(err);
     }
