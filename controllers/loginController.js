@@ -1,7 +1,7 @@
 'use strict';
 
 const jwt = require('jsonwebtoken');
-const { User } = require('../models');
+const { User, Favorite } = require('../models');
 
 class LoginController {
   /**
@@ -12,6 +12,8 @@ class LoginController {
       const { email, password } = req.body;
 
       const usuario = await User.findOne({ email });
+      const favorites = await Favorite.find({ user: usuario });
+      const favs = favorites.map((fav) => fav.course);
 
       if (
         !usuario ||
@@ -36,7 +38,12 @@ class LoginController {
             return;
           }
 
-          res.json({ token: jwtToken, displayName: usuario.username, userId: usuario._id });
+          res.json({
+            token: jwtToken,
+            displayName: usuario.username,
+            favs,
+            userId: usuario._id,
+          });
         },
       );
     } catch (err) {
