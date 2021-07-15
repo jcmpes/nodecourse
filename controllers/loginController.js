@@ -58,11 +58,13 @@ class LoginController {
           next(err);
           return;
         }
+        const usuario = await User.findOne({ _id: jwtToken._id });
         const favorites = await Favorite.find({ user: jwtToken._id });
         const favs = favorites.map((fav) => fav.course);
 
         res.json({
           loggedWithToken: true,
+          displayName: usuario.username,
           userID: jwtToken._id,
           favs,
         });
