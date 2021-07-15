@@ -65,20 +65,21 @@ router.get('/:slug', async function (req, res, next) {
 router.post('/', jwtAuth, async function (req, res, next) {
   try {
     // Server side validation
-    if (!courseData.category || !courseData.user) {
-      res.status(400).json({ message: 'User and category are both required' });
+    const courseData = { ...req.body }
+    const validation = courseData.title && courseData.category && courseData.user
+    if (!validation) {
+      res.status(400).json({ message: 'Title and category are both required' });
       return;
     };
-
+    
     // Inject userId in new course before saving it
-    const courseData = req.body;
-    const { user } = courseData;
-    const publisher = await User.findOne({ username: user })
+    const publisher = await User.findOne({ username: courseData.user });
     courseData.user = publisher._id;
-
+    console.log('courseData', courseData);
+    
     // Verify identity of publisher
-    if (courseData.user !== req.apiAuthUserId) {
-      res.status(401).json({ message: 'Unauthorized' });
+    if (courseData.user != req.apiAuthUserId) {
+      return res.status(401).json({ message: 'Unauthorized' });
     };
 
     const course = new Course(courseData);
