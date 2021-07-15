@@ -27,6 +27,7 @@ app.use('/api/v1/aboutme', require('./routes/apiv1/aboutme'));
 app.post('/api/v1/register', registerController.register);
 app.get('/api/v1/verify', verifyController.verify);
 app.post('/api/v1/loginJWT', loginController.postJWT);
+app.post('/api/v1/login-with-token', loginController.loginWithToken);
 app.post('/api/v1/forgot-password', forgotPasswordController.forgot);
 app.post('/api/v1/reset-password', resetPasswordController.reset);
 app.post('/api/v1/delete-user', deleteUserController.delete);
