@@ -1,4 +1,5 @@
 'use strict';
+process.chdir(__dirname);
 require('dotenv').config();
 
 const { mongoose, User } = require('./models');
