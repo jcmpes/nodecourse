@@ -57,8 +57,12 @@ class LoginController {
 
       jwt.verify(token, process.env.JWT_SECRET, async (err, jwtToken) => {
         if (err) {
-          next(err);
-          return;
+          res.json({
+            loggedWithToken: false,
+            displayName: null,
+            userID: null,
+            favs: [],
+          });
         }
         const usuario = await User.findOne({ _id: jwtToken._id });
         const favorites = await Favorite.find({ user: jwtToken._id });
