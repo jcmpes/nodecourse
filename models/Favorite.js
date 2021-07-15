@@ -2,7 +2,7 @@
 
 const mongoose = require('mongoose');
 
-const categorySchema = mongoose.Schema({
+const favoriteSchema = mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
@@ -13,6 +13,6 @@ const categorySchema = mongoose.Schema({
   },
 });
 
-const Favorite = mongoose.model('Favorite', categorySchema);
+const Favorite = mongoose.model('Favorite', favoriteSchema);
 
 module.exports = Favorite;

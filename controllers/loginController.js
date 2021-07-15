@@ -37,13 +37,12 @@ class LoginController {
             next(err);
             return;
           }
-
           res.json({
             token: jwtToken,
             displayName: usuario.username,
             favs,
-            userId: usuario._id,
           });
+
         },
       );
     } catch (err) {

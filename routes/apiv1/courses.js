@@ -8,6 +8,9 @@ const Course = mongoose.model('Course');
 const User = mongoose.model('User');
 const jwtAuth = require('../../lib/jwAuth');
 
+const multer  = require('multer')
+const upload = multer({ dest: "public/images/"});
+
 
 /**
  * GET /api/v1/courses
@@ -62,27 +65,32 @@ router.get('/:slug', async function (req, res, next) {
  * POST /api/v1/courses
  * Create a new course
  */
-router.post('/', jwtAuth, async function (req, res, next) {
+router.post('/', jwtAuth, upload.single('image'), async function (req, res, next) {
   try {
     // Server side validation
-    const courseData = { ...req.body }
-    const validation = courseData.title && courseData.category && courseData.user
+    const formData = { ...req.body }
+    const validation = formData.title && formData.category && formData.user
     if (!validation) {
       res.status(400).json({ message: 'Title and category are both required' });
       return;
     };
     
     // Inject userId in new course before saving it
-    const publisher = await User.findOne({ username: courseData.user });
-    courseData.user = publisher._id;
-    console.log('courseData', courseData);
+    const publisher = await User.findOne({ username: formData.user });
+    formData.user = publisher._id;
     
     // Verify identity of publisher
-    if (courseData.user != req.apiAuthUserId) {
+    if (formData.user != req.apiAuthUserId) {
+      console.log(formData.user, req.apiAuthUserId)
       return res.status(401).json({ message: 'Unauthorized' });
     };
 
-    const course = new Course(courseData);
+    // Save image name
+    const file = req.file;
+    const course = new Course(formData);
+    course.image = file.filename;
+
+    // Save new course in database
     const newCourse = await course.save();
     res.status(201).json(newCourse);
   } catch (err) {
