@@ -8,6 +8,9 @@ const Course = mongoose.model('Course');
 const User = mongoose.model('User');
 const jwtAuth = require('../../lib/jwAuth');
 
+const multer  = require('multer')
+const upload = multer({ dest: "public/images/"});
+
 
 /**
  * GET /api/v1/courses
@@ -62,7 +65,7 @@ router.get('/:slug', async function (req, res, next) {
  * POST /api/v1/courses
  * Create a new course
  */
-router.post('/', jwtAuth, async function (req, res, next) {
+router.post('/', jwtAuth, upload.single('image'), async function (req, res, next) {
   try {
     // Server side validation
     const courseData = { ...req.body }
