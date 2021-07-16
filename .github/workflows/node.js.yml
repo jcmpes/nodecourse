@@ -32,6 +32,10 @@ jobs:
         echo EMAIL_SENDINBLUE_ACCOUNT=${{ secrets.EMAIL_SENDINBLUE_ACCOUNT }} >> .env
         echo SENDINBLUE_SMTP_KEY=${{ secrets.SENDINBLUE_SMTP_KEY }} >> .env
         echo FRONTEND_URL=${{ secrets.FRONTEND_URL }} >> .env
+        echo AWS_BUCKET_NAME=${{ secrets.AWS_BUCKET_NAME }} >> .env
+        echo AWS_BUCKET_REGION=${{ secrets.AWS_BUCKET_REGION }} >> .env
+        echo AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }} >> .env
+        echo AWS_SECRET_KEY=${{ secrets.AWS_SECRET_KEY }} >> .env
         
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v2
