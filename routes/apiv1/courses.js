@@ -8,7 +8,8 @@ const Course = mongoose.model('Course');
 const User = mongoose.model('User');
 const jwtAuth = require('../../lib/jwAuth');
 
-const multer  = require('multer')
+const multer  = require('multer');
+const { uploadFile } = require('../../lib/s3');
 const upload = multer({ dest: "public/images/"});
 
 
@@ -89,6 +90,10 @@ router.post('/', jwtAuth, upload.single('image'), async function (req, res, next
     const file = req.file;
     const course = new Course(formData);
     course.image = file.filename;
+    
+    // Uplaod file to S3
+    const result = await uploadFile(file)
+    console.log('S3 upload: ', result)
 
     // Save new course in database
     const newCourse = await course.save();
