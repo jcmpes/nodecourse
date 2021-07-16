@@ -85,15 +85,15 @@ router.post('/', jwtAuth, upload.single('image'), async function (req, res, next
       console.log(formData.user, req.apiAuthUserId)
       return res.status(401).json({ message: 'Unauthorized' });
     };
-
-    // Save image name
-    const file = req.file;
-    const course = new Course(formData);
-    course.image = file.filename;
     
     // Uplaod file to S3
-    const result = await uploadFile(file)
-    console.log('S3 upload: ', result)
+    const file = req.file;
+    const { Location } = await uploadFile(file)
+    console.log('Response from S3: ', response)
+    
+    // Save image name
+    const course = new Course(formData);
+    course.image = Location;
 
     // Save new course in database
     const newCourse = await course.save();
