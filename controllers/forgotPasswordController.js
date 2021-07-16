@@ -16,7 +16,10 @@ class ForgotPasswordController {
       const usuario = await User.findOne({ email });
 
       if (!usuario) {
-        res.json({ message: `There is not such email in database` });
+        res.json({
+          // original message: 'There is not such email in database'
+          message: `You will receive an email if this email address is in our database`,
+        });
       } else {
         const randomToken = generator();
         const result = await User.updateOne(
@@ -32,12 +35,15 @@ class ForgotPasswordController {
           subject: `Reset password`,
           recipients: ['oscar.corb@gmail.com'], // <--- For Development (change to desired recepter)
           // recipients: [email], // <--------------------- For Production
-          message: `Here is your password reset link<br><a href=${address}>${address}</a>.`,
+          message: `Here is your password reset link: <a href='${address}'>${address}</a>`,
         };
         //TODO: Make it a verification mail
         sendEmail(mailObj);
-
-        res.json({ success: true, message: `Reset link sent to user` });
+        res.json({
+          // success: true,
+          // Original message: 'Reset link sent to user'
+          message: `You will receive an email if this email address is in our database`,
+        });
       }
     } catch (err) {
       next(err);
