@@ -60,10 +60,11 @@ async function initCourses() {
       user: await User.findOne({}),
       category: await Category.findOne({}),
       featuredImage: '',
-      video: 'https://www.youtube.com/embed/rfscVS0vtbw',
+      video: 'rfscVS0vtbw',
       description: 'This is description for course 1',
       content: 'This is the content fo course 1',
       createdAt: Date.now(),
+      image: 'https://final-project-web-x.s3.amazonaws.com/3dfd522dc764b3f2e647cfa6f22b6e83'
     },
     {
       title: 'Curso 2',
@@ -71,10 +72,11 @@ async function initCourses() {
       user: await User.findOne({}),
       category: await Category.findOne({}),
       featuredImage: '',
-      video: 'https://www.youtube.com/embed/OXE2a8dqIAI',
+      video: 'OXE2a8dqIAI',
       description: 'This is description for course 2',
       content: 'This is the content fo course 2',
       createdAt: Date.now(),
+      image: 'https://final-project-web-x.s3.amazonaws.com/80c33335d9463bfa647551e928ef1c86'
     },
     {
       title: 'Curso 3',
@@ -82,10 +84,11 @@ async function initCourses() {
       user: await User.findOne({}),
       category: await Category.findOne({}),
       featuredImage: '',
-      video: 'https://www.youtube.com/embed/Kyx2PsuwomE',
+      video: 'Kyx2PsuwomE',
       description: 'This is description for course 3',
       content: 'This is the content fo course 3',
       createdAt: Date.now(),
+      image: 'https://final-project-web-x.s3.amazonaws.com/dbd147e64dbb31425ad98c8ea070c23d'
     },
   ]);
   console.log(
