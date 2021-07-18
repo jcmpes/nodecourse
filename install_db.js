@@ -11,14 +11,16 @@ const {
   User,
   Course,
   Category,
+  Purchase,
 } = require('./models');
 
 main().catch((err) => console.error(err));
 
 async function main() {
   await initUsers();
-  await initCategories();
   await initCourses();
+  await initCategories();
+  await initPurchases();
   mongoose.connection.close();
 }
 
@@ -64,7 +66,8 @@ async function initCourses() {
       description: 'This is description for course 1',
       content: 'This is the content fo course 1',
       createdAt: Date.now(),
-      image: 'https://final-project-web-x.s3.amazonaws.com/3dfd522dc764b3f2e647cfa6f22b6e83'
+      image:
+        'https://final-project-web-x.s3.amazonaws.com/3dfd522dc764b3f2e647cfa6f22b6e83',
     },
     {
       title: 'Curso 2',
@@ -76,7 +79,8 @@ async function initCourses() {
       description: 'This is description for course 2',
       content: 'This is the content fo course 2',
       createdAt: Date.now(),
-      image: 'https://final-project-web-x.s3.amazonaws.com/80c33335d9463bfa647551e928ef1c86'
+      image:
+        'https://final-project-web-x.s3.amazonaws.com/80c33335d9463bfa647551e928ef1c86',
     },
     {
       title: 'Curso 3',
@@ -88,7 +92,8 @@ async function initCourses() {
       description: 'This is description for course 3',
       content: 'This is the content fo course 3',
       createdAt: Date.now(),
-      image: 'https://final-project-web-x.s3.amazonaws.com/dbd147e64dbb31425ad98c8ea070c23d'
+      image:
+        'https://final-project-web-x.s3.amazonaws.com/dbd147e64dbb31425ad98c8ea070c23d',
     },
   ]);
   console.log(
@@ -138,3 +143,58 @@ async function initCategories() {
     }.`,
   );
 }
+
+const initPurchases = async () => {
+  const { deletedCount } = await Purchase.deleteMany();
+  console.log(
+    `Purchases:
+- ${deletedCount} deleted`,
+  );
+
+  const result = await Purchase.insertMany([
+    {
+      price: 16.99,
+      date: Date.now(),
+      paymentCode: '1d3f9a1HkND4xX0hT7cSj7e2d',
+      user: await User.findOne({}),
+      courses: [],
+    },
+    {
+      price: 20,
+      date: Date.now(),
+      paymentCode: '2d3f9a1HkND4xX0hT7cSj7e2d',
+      user: await User.findOne({}),
+      courses: [],
+    },
+    {
+      price: 12.5,
+      date: Date.now(),
+      paymentCode: '3d3f9a1HkND4xX0hT7cSj7e2d',
+      user: await User.findOne({}),
+      courses: [],
+    },
+    {
+      price: 25,
+      date: Date.now(),
+      paymentCode: '4d3f9a1HkND4xX0hT7cSj7e2d',
+      user: await User.findOne({}),
+      courses: [],
+    },
+    {
+      price: 9.99,
+      date: Date.now(),
+      paymentCode: '5d3f9a1HkND4xX0hT7cSj7e2d',
+      user: await User.findOne({}),
+      courses: [],
+    },
+    {
+      price: 14.99,
+      date: Date.now(),
+      paymentCode: '6d3f9a1HkND4xX0hT7cSj7e2d',
+      user: await User.findOne({}),
+      courses: [],
+    },
+  ]);
+
+  console.log(`- ${result.length} inserted`);
+};
