@@ -73,7 +73,7 @@ router.post(
     try {
       // Server side validation
       const formData = { ...req.body };
-      const validation = formData.title && formData.category && formData.user;
+      const validation = formData.title && formData.category;
       if (!validation) {
         res
           .status(400)
@@ -82,21 +82,16 @@ router.post(
       }
 
       // Inject userId in new course before saving it
-      const publisher = await User.findOne({ username: formData.user });
+      const publisher = await User.findOne({ _id: req.apiAuthUserId });
       formData.user = publisher._id;
-
-      // Verify identity of publisher
-      if (formData.user != req.apiAuthUserId) {
-        return res.status(401).json({ message: 'Unauthorized' });
-      }
-
-      // Uplaod file to S3
-      const file = req.file;
-      const { Location } = await uploadFile(file);
-
-      // Save image name
       const course = new Course(formData);
-      course.image = Location;
+
+      // Uplaod file to S3 and add image location to course object
+      if (req.file) {
+        const file = req.file;
+        const { Location } = await uploadFile(file);        
+        course.image = Location;
+      }    
 
       // Save new course in database
       const newCourse = await course.save();
