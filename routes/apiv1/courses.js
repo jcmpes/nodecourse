@@ -82,14 +82,12 @@ router.post('/', jwtAuth, upload.single('image'), async function (req, res, next
     
     // Verify identity of publisher
     if (formData.user != req.apiAuthUserId) {
-      console.log(formData.user, req.apiAuthUserId)
       return res.status(401).json({ message: 'Unauthorized' });
     };
     
     // Uplaod file to S3
     const file = req.file;
     const { Location } = await uploadFile(file)
-    console.log('Response from S3: ', response)
     
     // Save image name
     const course = new Course(formData);
