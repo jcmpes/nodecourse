@@ -1,5 +1,7 @@
 'use strict';
 require('dotenv').config();
+var Chance = require('chance');
+var chance = new Chance();
 
 const { ObjectId } = require('bson');
 const fs = require('fs');
@@ -11,15 +13,18 @@ const {
   User,
   Course,
   Category,
+  Favorite,
   Purchase,
 } = require('./models');
+const { parse } = require('dotenv');
 
 main().catch((err) => console.error(err));
 
 async function main() {
   await initUsers();
-  await initCourses();
   await initCategories();
+  await initCourses();
+  await initFavs();
   await initPurchases();
   mongoose.connection.close();
 }
@@ -32,14 +37,25 @@ async function initUsers() {
     }.`,
   );
 
-  const result = await User.insertMany([
+  const users = [
     {
       email: process.env.USER_EMAIL,
       password: await User.hashPassword(process.env.USER_PASSWORD),
       username: 'Pepe',
       activated: true,
     },
-  ]);
+  ];
+
+  for (let i = 1; i < 11; i++) {
+    users.push({
+      email: chance.word({ length: i }) + '@achilipu.com',
+      password: await User.hashPassword(chance.string({ length: 4 })),
+      username: chance.name(),
+      activated: true,
+    });
+  }
+
+  const result = await User.insertMany(users);
   console.log(
     `Insertado${result.length !== 1 ? 's' : ''} ${result.length} usuario${
       result.length !== 1 ? 's' : ''
@@ -55,47 +71,30 @@ async function initCourses() {
     }.`,
   );
 
-  const result = await Course.insertMany([
-    {
-      title: 'Curso 11',
-      slug: 'curso-11',
-      user: await User.findOne({}),
-      category: await Category.findOne({}),
-      featuredImage: '',
-      video: 'rfscVS0vtbw',
-      description: 'This is description for course 1',
-      content: 'This is the content fo course 1',
+  const courses = [];
+
+  for (let i = 3; i < 20; i++) {
+    const title = chance.sentence({ words: 4 });
+    const R = Math.floor(Math.random() * 11);
+    const userC = await User.findOne({}).limit(1).skip(R);
+    const RCat = Math.floor(Math.random() * 20);
+    const catC = await Category.findOne({}).limit(1).skip(RCat);
+    courses.push({
+      title,
+      slug: title.replace(' ', '-'),
+      user: userC._id,
+      category: catC._id,
+      featuredImage: chance.word(),
+      video: chance.word(),
+      description: chance.sentence({ length: 10 }),
+      content: chance.paragraph({ sentences: 3 }),
       createdAt: Date.now(),
       image:
         'https://final-project-web-x.s3.amazonaws.com/3dfd522dc764b3f2e647cfa6f22b6e83',
-    },
-    {
-      title: 'Curso 2',
-      slug: 'curso-2',
-      user: await User.findOne({}),
-      category: await Category.findOne({}),
-      featuredImage: '',
-      video: 'OXE2a8dqIAI',
-      description: 'This is description for course 2',
-      content: 'This is the content fo course 2',
-      createdAt: Date.now(),
-      image:
-        'https://final-project-web-x.s3.amazonaws.com/80c33335d9463bfa647551e928ef1c86',
-    },
-    {
-      title: 'Curso 3',
-      slug: 'curso-3',
-      user: await User.findOne({}),
-      category: await Category.findOne({}),
-      featuredImage: '',
-      video: 'Kyx2PsuwomE',
-      description: 'This is description for course 3',
-      content: 'This is the content fo course 3',
-      createdAt: Date.now(),
-      image:
-        'https://final-project-web-x.s3.amazonaws.com/dbd147e64dbb31425ad98c8ea070c23d',
-    },
-  ]);
+    });
+  }
+
+  const result = await Course.insertMany(courses);
   console.log(
     `Insertado${result.length !== 1 ? 's' : ''} ${result.length} curso${
       result.length !== 1 ? 's' : ''
@@ -111,35 +110,30 @@ async function initCategories() {
     }.`,
   );
 
-  const result = await Category.insertMany([
-    {
-      name: 'Categoria 1',
-      description: 'This is the description of Categoria 1',
-      slug: 'categoria-1',
+  const categories = [];
+
+  for (let i = 0; i < 20; i++) {
+    const name = chance.word();
+    categories.push({
+      name,
+      description: chance.sentence({ length: 10 }),
+      slug: name,
       courses: [],
-    },
-    {
-      name: 'Categoria 2',
-      description: 'This is the description of Categoria 2',
-      slug: 'categoria-2',
-      courses: [],
-    },
-    {
-      name: 'Categoria 2',
-      description: 'This is the description of Categoria 2',
-      slug: 'categoria-2',
-      courses: [],
-    },
-    {
-      name: 'Categoria 3',
-      description: 'This is the description of Categoria 3',
-      slug: 'categoria-3',
-      courses: [],
-    },
-  ]);
+    });
+  }
+  const result = await Category.insertMany(categories);
   console.log(
     `Insertada${result.length !== 1 ? 's' : ''} ${result.length} categoria${
       result.length !== 1 ? 's' : ''
+    }.`,
+  );
+}
+
+async function initFavs() {
+  const { deletedCount } = await Favorite.deleteMany();
+  console.log(
+    `Eliminado${deletedCount !== 1 ? 's' : ''} ${deletedCount} favorito${
+      deletedCount !== 1 ? 's' : ''
     }.`,
   );
 }
