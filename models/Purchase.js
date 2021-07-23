@@ -3,19 +3,19 @@
 const mongoose = require('mongoose');
 
 const purchaseSchema = mongoose.Schema({
-  price: Number,
-  date: Date,
-  paymentCode: String,
-  user: {
+  username: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
   },
-  courses: [
+  purchasedCourses: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Course',
     },
   ],
+  purchasePrice: Number,
+  purchaseDate: Date,
+  paymentCode: String,
 });
 
 const Purchase = mongoose.model('Purchase', purchaseSchema);
