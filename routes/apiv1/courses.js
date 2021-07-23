@@ -34,7 +34,7 @@ router.get('/', async function (req, res, next) {
     const filter = {};
 
     if (title) {
-      filter.title = new RegExp('^' + title);
+      filter.title = new RegExp(title);
     }
 
     const result = await Course.list(filter, skip, limit, sort);
@@ -89,9 +89,9 @@ router.post(
       // Uplaod file to S3 and add image location to course object
       if (req.file) {
         const file = req.file;
-        const { Location } = await uploadFile(file);        
+        const { Location } = await uploadFile(file);
         course.image = Location;
-      }    
+      }
 
       // Save new course in database
       const newCourse = await course.save();
