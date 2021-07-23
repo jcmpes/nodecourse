@@ -34,7 +34,7 @@ router.get('/', async function (req, res, next) {
     const filter = {};
 
     if (title) {
-      filter.title = new RegExp(title);
+      filter.title = { $regex: `${title}`, $options: 'i' };
     }
 
     const result = await Course.list(filter, skip, limit, sort);
