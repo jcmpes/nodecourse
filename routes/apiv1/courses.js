@@ -37,8 +37,6 @@ router.get('/', async function (req, res, next) {
       filter.title = { $regex: `${title}`, $options: 'i' };
     }
 
-    console.log(sort);
-
     const result = await Course.list(filter, skip, limit, sort);
     res.json(result);
   } catch (error) {
