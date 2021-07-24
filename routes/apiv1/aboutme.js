@@ -53,7 +53,7 @@ router.get('/myfavsdetails', jwtAuth, async function (req, res, next) {
       const course = await Course.findOne({ _id: favorites[i].course });
       favs.push(course);
     }
-    res.json({ favs });
+    res.json({ courses: favs });
   } catch (err) {
     next(err);
   }
