@@ -28,7 +28,7 @@ router.get('/', async function (req, res, next) {
 
     const limit = parseInt(req.query.limit) || 100;
     const skip = parseInt(req.query.skip) || 0;
-    const sort = req.query.sort || 'createdAt';
+    const sort = req.query.sort || { _id: -1 };
 
     // empty filter
     const filter = {};
@@ -36,6 +36,8 @@ router.get('/', async function (req, res, next) {
     if (title) {
       filter.title = { $regex: `${title}`, $options: 'i' };
     }
+
+    console.log(sort);
 
     const result = await Course.list(filter, skip, limit, sort);
     res.json(result);
