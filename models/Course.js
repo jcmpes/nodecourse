@@ -8,7 +8,7 @@ mongoose.plugin(slug);
 
 const courseSchema = mongoose.Schema(
   {
-    title: { type: String, unique: true },
+    title: { type: String, unique: true, index: true },
     slug: { type: String, slug: 'title', unique: true },
     user: {
       type: mongoose.Schema.Types.ObjectId,

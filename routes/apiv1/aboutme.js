@@ -19,7 +19,10 @@ router.get('/isfav/:course', jwtAuth, async function (req, res, next) {
   try {
     const user = req.apiAuthUserId;
     const course = req.params.course;
-    const isFav = await Favorite.find({ user, course });
+    const isFav = await Favorite.find({
+      'fav.user': user,
+      'fav.course': course,
+    });
     res.json({ result: isFav.length > 0 });
   } catch (err) {
     next(err);
@@ -35,8 +38,8 @@ router.get('/isfav/:course', jwtAuth, async function (req, res, next) {
 router.get('/myfavs', jwtAuth, async function (req, res, next) {
   try {
     const user = req.apiAuthUserId;
-    const isFav = await Favorite.find({ user });
-    const favs = isFav.map((fav) => fav.course);
+    const isFav = await Favorite.find({ fav: { user } });
+    const favs = isFav.map((fav) => fav.fav.course);
 
     res.json({ favs });
   } catch (err) {
@@ -47,10 +50,10 @@ router.get('/myfavs', jwtAuth, async function (req, res, next) {
 router.get('/myfavsdetails', jwtAuth, async function (req, res, next) {
   try {
     const user = req.apiAuthUserId;
-    const favorites = await Favorite.find({ user });
+    const favorites = await Favorite.find({ 'fav.user': user });
     const favs = [];
     for (let i = 0; i < favorites.length; i++) {
-      const course = await Course.findOne({ _id: favorites[i].course })
+      const course = await Course.findOne({ _id: favorites[i].fav.course })
         .populate('user')
         .populate('category');
       favs.push(course);
@@ -71,8 +74,11 @@ router.post('/newfav/:course', jwtAuth, async function (req, res, next) {
   try {
     const user = req.apiAuthUserId;
     const course = req.params.course;
-    const favorite = await Favorite.insertMany([{ user, course }]);
-    res.json({ success: true, favorite });
+    const favorite = await Favorite.insertMany([{ fav: { user, course } }]);
+    res.json({
+      success: true,
+      favorite: { user, course },
+    });
   } catch (err) {
     next(err);
   }
@@ -88,8 +94,10 @@ router.post('/removefav/:course', jwtAuth, async function (req, res, next) {
   try {
     const user = req.apiAuthUserId;
     const course = req.params.course;
-    const favorite = await Favorite.findOne({ user, course });
-    console.log(favorite);
+    const favorite = await Favorite.findOne({
+      'fav.user': user,
+      'fav.course': course,
+    });
     const { deletedCount } = await Favorite.deleteOne({ _id: favorite._id });
     res.json({ success: deletedCount > 0 });
   } catch (err) {
