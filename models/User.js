@@ -6,7 +6,16 @@ const bcrypt = require('bcrypt');
 const userSchema = mongoose.Schema({
   email: { type: String, unique: true, index: true },
   password: String,
+
   username: { type: String, unique: true, index: true },
+
+  courses: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Course',
+    },
+  ],
+
   resetPasswordToken: String,
   resetPasswordTokenExpires: Date,
   activated: Boolean,
