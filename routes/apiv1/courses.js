@@ -6,28 +6,35 @@ const mongoose = require('mongoose');
 const Category = mongoose.model('Category');
 const Course = mongoose.model('Course');
 const User = mongoose.model('User');
+const Favorite = mongoose.model('Favorite');
 const jwtAuth = require('../../lib/jwAuth');
 
 const multer = require('multer');
 const { uploadFile } = require('../../lib/s3');
 const path = require('path');
 
-const UPLOAD_FOLDER = process.env.UPLOAD_FOLDER || "public/images/";
+const UPLOAD_FOLDER = process.env.UPLOAD_FOLDER || 'public/images/';
 
 /**
  * Configurar multer
  */
-const fileExtensionRemover = originalName => {
+const fileExtensionRemover = (originalName) => {
   return originalName.split('.')[0];
 };
 
 const storage = multer.diskStorage({
-  destination: function(req, file, cb) {
+  destination: function (req, file, cb) {
     cb(null, UPLOAD_FOLDER);
   },
-  filename: function(req,file, cb) {
-    cb(null, fileExtensionRemover(file.originalname) + '-' + Date.now() + path.extname(file.originalname))
-  }
+  filename: function (req, file, cb) {
+    cb(
+      null,
+      fileExtensionRemover(file.originalname) +
+        '-' +
+        Date.now() +
+        path.extname(file.originalname),
+    );
+  },
 });
 const upload = multer({ storage });
 
@@ -74,7 +81,11 @@ router.get('/:slug', async function (req, res, next) {
     if (!course) {
       return res.status(404).json({ error: 'not found' });
     }
-    res.json(course);
+    const numFavs = await Favorite.find({
+      'fav.course': course._id,
+    }).countDocuments();
+    const courseWithFavs = { ...course._doc, numFavs };
+    res.json(courseWithFavs);
   } catch (err) {
     next(err);
   }
