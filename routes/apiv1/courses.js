@@ -153,18 +153,15 @@ router.put(
       }    
 
       // Find course to be updated and save changes
-      const response = await Course.findOne({ title: formData.title }, function (err, doc) {
-        if (err) {
-          return err;
-        }
-        // doc.title = course.title;
-        // doc.description = course.description;
-        // doc.content = course.content;
-        // doc.category = course.category;
+      const doc = await Course.findOne({ _id: formData._id })
+      console.log('doc', doc)
+        doc.title = course.title;
+        doc.description = course.description;
+        doc.content = course.content;
+        doc.category = course.category;
         if(req.file) doc.image = course.image;
-        doc.save(() => res.status(201).json(response))
-      })
-
+        const result = await doc.save()
+        res.status(201).json(result)
       
     } catch(err) {
       next(err)
