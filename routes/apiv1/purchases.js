@@ -106,9 +106,7 @@ router.post('/', jwtAuth, async function (req, res, next) {
     purchaseData.purchaseDate = Date.now();
 
     const purchase = new Purchase(purchaseData);
-    console.log('purchase -->', purchase);
     const newPurchase = await purchase.save();
-    console.log('newPurchase -->', newPurchase);
     res.status(201).json({ newPurchaseCreated: newPurchase });
   } catch (error) {
     next(error);
