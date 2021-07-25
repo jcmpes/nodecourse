@@ -7,6 +7,12 @@ const userSchema = mongoose.Schema({
   email: { type: String, unique: true },
   password: String,
   username: { type: String, unique: true },
+  courses: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Course',
+    },
+  ],
   resetPasswordToken: String,
   resetPasswordTokenExpires: Date,
   activated: Boolean,
