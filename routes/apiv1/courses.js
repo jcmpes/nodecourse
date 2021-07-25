@@ -10,7 +10,26 @@ const jwtAuth = require('../../lib/jwAuth');
 
 const multer = require('multer');
 const { uploadFile } = require('../../lib/s3');
-const upload = multer({ dest: 'public/images/' });
+const path = require('path');
+
+const UPLOAD_FOLDER = process.env.UPLOAD_FOLDER || "public/images/";
+
+/**
+ * Configurar multer
+ */
+const fileExtensionRemover = originalName => {
+  return originalName.split('.')[0];
+};
+
+const storage = multer.diskStorage({
+  destination: function(req, file, cb) {
+    cb(null, UPLOAD_FOLDER);
+  },
+  filename: function(req,file, cb) {
+    cb(null, fileExtensionRemover(file.originalname) + '-' + Date.now() + path.extname(file.originalname))
+  }
+});
+const upload = multer({ storage });
 
 /**
  * GET /api/v1/courses
@@ -86,8 +105,8 @@ router.post(
       formData.user = publisher._id;
       const course = new Course(formData);
 
-      // Uplaod file to S3 and add image location to course object
       if (req.file) {
+        // Uplaod file to S3 and add image location to course object
         const file = req.file;
         const { Location } = await uploadFile(file);
         course.image = Location;
