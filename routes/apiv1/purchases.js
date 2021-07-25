@@ -55,36 +55,43 @@ router.post('/', jwtAuth, async function (req, res, next) {
     // Server side validation
     const purchaseData = req.body;
     const userId = req.apiAuthUserId;
-    const purchasedCourses = purchaseData.purchasedCourses;
-
-    // console.log('typeoof --->', typeof purchaseData.purchasedCourses);
-
-    // const purchasedCourses =
-    //   purchaseData.purchasedCourses !== Object
-    //     ? [purchaseData.purchasedCourses]
-    //     : purchaseData.purchasedCourses;
-
-    console.log('purchasedCourses  --->', purchasedCourses);
+    const purchasedCourses =
+      typeof purchaseData.purchasedCourses === 'string'
+        ? [purchaseData.purchasedCourses]
+        : purchaseData.purchasedCourses;
 
     const validation = purchasedCourses && purchaseData.paymentCode;
     if (!validation) {
-      res.status(400).json({ message: 'All purchase data is required' });
+      res.status(400).json({ message: 'all purchase data is required' });
       return;
     }
 
-    // √. meter nombre la id del username en el paquete
-    purchaseData.username = userId;
-    // √. meter la fecha en el paquete
-    purchaseData.purchaseDate = Date.now();
-    // √. añadir los cursos comprados al usuario (no machacar existentes)
+    // check user
+    const user = await User.findOne({ _id: userId });
+    if (!user) {
+      res.status(404).json({ error: 'user not found' });
+      return;
+    }
+
+    // check if any of the purchased courses have already been purchased
+    let alreadyPurchased = false;
+    purchasedCourses.forEach((course) => {
+      if (user.courses.includes(course)) {
+        alreadyPurchased = true;
+      }
+    });
+    if (alreadyPurchased) {
+      res.status(401).json({ error: 'course already purchased' });
+      return;
+    }
+
+    // add purchases courses to user purchase array
     await User.findOneAndUpdate(
       { _id: userId },
       { $push: { courses: purchasedCourses } },
     );
 
-    // ˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜
-    // -. buscar en BDD de cursos el precio de cada uno de los cursos comprados
-    // sumar precios y meter el total en el campo purchasePrice de Purchase
+    // check price courses in DB in order to add total price to purchaseData
     let totalCoursesPrice = 0;
     for (let i = 0; i < purchasedCourses.length; i++) {
       const courseId = purchasedCourses[i];
@@ -94,12 +101,14 @@ router.post('/', jwtAuth, async function (req, res, next) {
       }
     }
     purchaseData.purchasePrice = totalCoursesPrice;
-    // ˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜˜
+
+    purchaseData.username = userId;
+    purchaseData.purchaseDate = Date.now();
 
     const purchase = new Purchase(purchaseData);
-    // console.log('purchase -->', purchase);
+    console.log('purchase -->', purchase);
     const newPurchase = await purchase.save();
-    // console.log('newPurchase -->', newPurchase);
+    console.log('newPurchase -->', newPurchase);
     res.status(201).json({ newPurchaseCreated: newPurchase });
   } catch (error) {
     next(error);
