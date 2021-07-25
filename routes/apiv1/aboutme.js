@@ -51,7 +51,6 @@ router.get('/myfavsdetails', jwtAuth, async function (req, res, next) {
   try {
     const user = req.apiAuthUserId;
     const favorites = await Favorite.find({ 'fav.user': user });
-    console.log(favorites);
     const favs = [];
     for (let i = 0; i < favorites.length; i++) {
       const course = await Course.findOne({ _id: favorites[i].fav.course })
@@ -95,12 +94,10 @@ router.post('/removefav/:course', jwtAuth, async function (req, res, next) {
   try {
     const user = req.apiAuthUserId;
     const course = req.params.course;
-    console.log('borra user ' + user + ' y curso ' + course);
     const favorite = await Favorite.findOne({
       'fav.user': user,
       'fav.course': course,
     });
-    console.log(favorite);
     const { deletedCount } = await Favorite.deleteOne({ _id: favorite._id });
     res.json({ success: deletedCount > 0 });
   } catch (err) {
