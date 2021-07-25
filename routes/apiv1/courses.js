@@ -122,6 +122,58 @@ router.post(
 );
 
 /**
+ * PUT /api/v1/courses
+ * Updates an existing course
+ */
+router.put(
+  '/',
+  jwtAuth,
+  upload.single('image'),
+  async function (req, res, next) {
+    try {
+      const formData = { ...req.body };
+      const validation = formData.title && formData.category;
+      if (!validation) {
+        res
+          .status(400)
+          .json({ message: 'Title and category are both required' });
+        return;
+      }
+
+      // Inject userId in new course before saving it
+      const publisher = await User.findOne({ _id: req.apiAuthUserId });
+      formData.user = publisher._id;
+      const course = new Course(formData);
+
+      if (req.file) {
+        // Uplaod file to S3 and add image location to course object
+        const file = req.file;
+        const { Location } = await uploadFile(file);        
+        course.image = Location;
+      }    
+
+      // Find course to be updated and save changes
+      const response = await Course.findOne({ title: formData.title }, function (err, doc) {
+        if (err) {
+          return err;
+        }
+        // doc.title = course.title;
+        // doc.description = course.description;
+        // doc.content = course.content;
+        // doc.category = course.category;
+        if(req.file) doc.image = course.image;
+        doc.save(() => res.status(201).json(response))
+      })
+
+      
+    } catch(err) {
+      next(err)
+    }
+  }
+)
+
+
+/**
  * DELETE /api/v1/courses/:id
  * Delete an existing course
  */
