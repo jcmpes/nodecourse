@@ -4,5 +4,6 @@ module.exports = {
   Course: require('./Course'),
   Category: require('./Category'),
   Favorite: require('./Favorite'),
+  Purchase: require('./Purchase'),
   mongoose: require('mongoose'),
 };

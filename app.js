@@ -38,6 +38,14 @@ app.use('/api/v1/courses', require('./routes/apiv1/courses'));
 // API categories
 app.use('/api/v1/categories', require('./routes/apiv1/categories'));
 
+
+// API purchases
+app.use('/api/v1/purchases', require('./routes/apiv1/purchases'));
+
+// API users
+app.use('/api/v1/user', require('./routes/apiv1/users'));
+
+
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));

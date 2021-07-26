@@ -14,6 +14,7 @@ const {
   Course,
   Category,
   Favorite,
+  Purchase,
 } = require('./models');
 const { parse } = require('dotenv');
 
@@ -24,6 +25,7 @@ async function main() {
   await initCategories();
   await initCourses();
   await initFavs();
+  await initPurchases();
   mongoose.connection.close();
 }
 
@@ -135,3 +137,58 @@ async function initFavs() {
     }.`,
   );
 }
+
+const initPurchases = async () => {
+  const { deletedCount } = await Purchase.deleteMany();
+  console.log(
+    `Purchases:
+- ${deletedCount} deleted`,
+  );
+
+  const result = await Purchase.insertMany([
+    {
+      price: 16.99,
+      date: Date.now(),
+      paymentCode: '1d3f9a1HkND4xX0hT7cSj7e2d',
+      user: await User.findOne({}),
+      courses: await Course.find({}),
+    },
+    {
+      price: 20,
+      date: Date.now(),
+      paymentCode: '2d3f9a1HkND4xX0hT7cSj7e2d',
+      user: await User.findOne({}),
+      courses: await Course.find({}),
+    },
+    {
+      price: 12.5,
+      date: Date.now(),
+      paymentCode: '3d3f9a1HkND4xX0hT7cSj7e2d',
+      user: await User.findOne({}),
+      courses: await Course.find({}),
+    },
+    {
+      price: 25,
+      date: Date.now(),
+      paymentCode: '4d3f9a1HkND4xX0hT7cSj7e2d',
+      user: await User.findOne({}),
+      courses: await Course.find({}),
+    },
+    {
+      price: 9.99,
+      date: Date.now(),
+      paymentCode: '5d3f9a1HkND4xX0hT7cSj7e2d',
+      user: await User.findOne({}),
+      courses: await Course.find({}),
+    },
+    {
+      price: 14.99,
+      date: Date.now(),
+      paymentCode: '6d3f9a1HkND4xX0hT7cSj7e2d',
+      user: await User.findOne({}),
+      courses: await Course.find({}),
+    },
+  ]);
+
+  console.log(`- ${result.length} inserted`);
+};

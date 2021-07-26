@@ -47,13 +47,13 @@ router.get('/', async function (req, res, next) {
 
     const limit = parseInt(req.query.limit) || 100;
     const skip = parseInt(req.query.skip) || 0;
-    const sort = req.query.sort || 'createdAt';
+    const sort = req.query.sort || { _id: -1 };
 
     // empty filter
     const filter = {};
 
     if (title) {
-      filter.title = new RegExp('^' + title);
+      filter.title = { $regex: `${title}`, $options: 'i' };
     }
 
     const result = await Course.list(filter, skip, limit, sort);
@@ -107,9 +107,9 @@ router.post(
       if (req.file) {
         // Uplaod file to S3 and add image location to course object
         const file = req.file;
-        const { Location } = await uploadFile(file);        
+        const { Location } = await uploadFile(file);
         course.image = Location;
-      }    
+      }
 
       // Save new course in database
       const newCourse = await course.save();

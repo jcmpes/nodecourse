@@ -3,13 +3,17 @@
 const mongoose = require('mongoose');
 
 const favoriteSchema = mongoose.Schema({
-  user: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-  },
-  course: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Course',
+  fav: {
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      index: true,
+    },
+    course: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Course',
+      index: true,
+    },
   },
 });
 

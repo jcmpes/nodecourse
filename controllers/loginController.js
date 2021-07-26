@@ -12,8 +12,8 @@ class LoginController {
       const { email, password } = req.body;
 
       const usuario = await User.findOne({ email });
-      const favorites = await Favorite.find({ user: usuario });
-      const favs = favorites.map((fav) => fav.course);
+      const favorites = await Favorite.find({ 'fav.user': usuario._id });
+      const favs = favorites.map((fav) => fav.fav.course);
 
       if (
         !usuario ||
@@ -65,8 +65,8 @@ class LoginController {
           });
         }
         const usuario = await User.findOne({ _id: jwtToken._id });
-        const favorites = await Favorite.find({ user: jwtToken._id });
-        const favs = favorites.map((fav) => fav.course);
+        const favorites = await Favorite.find({ 'fav.user': jwtToken._id });
+        const favs = favorites.map((fav) => fav.fav.course);
 
         res.json({
           loggedWithToken: true,
