@@ -101,8 +101,7 @@ router.post(
       }
 
       // Inject userId in new course before saving it
-      const publisher = await User.findOne({ _id: req.apiAuthUserId });
-      formData.user = publisher._id;
+      formData.user = req.apiAuthUserId;
       const course = new Course(formData);
 
       if (req.file) {
@@ -141,8 +140,7 @@ router.put(
       }
 
       // Inject userId in new course before saving it
-      const publisher = await User.findOne({ _id: req.apiAuthUserId });
-      formData.user = publisher._id;
+      formData.user = req.apiAuthUserId;
       const course = new Course(formData);
 
       if (req.file) {
