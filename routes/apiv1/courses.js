@@ -157,7 +157,7 @@ router.put(
       if (!validation) {
         res
           .status(400)
-          .json({ message: 'Somethign went wrong' });
+          .json({ message: 'Something went wrong' });
         return;
       }
 
