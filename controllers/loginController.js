@@ -12,6 +12,14 @@ class LoginController {
       const { email, password } = req.body;
 
       const usuario = await User.findOne({ email });
+      if (!usuario) {
+        const error = new Error(
+          'invalid credentials or email account not verified',
+        );
+        error.status = 404;
+        next(error);
+        return;
+      }
       const favorites = await Favorite.find({ 'fav.user': usuario._id });
       const favs = favorites.map((fav) => fav.fav.course);
 
@@ -76,6 +84,7 @@ class LoginController {
         });
       });
     } catch (err) {
+      err.message = 'caca';
       next(err);
     }
   }
