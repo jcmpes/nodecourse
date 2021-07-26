@@ -131,13 +131,13 @@ router.put(
   async function (req, res, next) {
     try {
       const formData = { ...req.body };
-      const validation = formData.title && formData.category;
-      if (!validation) {
-        res
-          .status(400)
-          .json({ message: 'Title and category are both required' });
-        return;
-      }
+      // const validation = formData.title && formData.category;
+      // if (!validation) {
+      //   res
+      //     .status(400)
+      //     .json({ message: 'Title and category are both required' });
+      //   return;
+      // }
 
       // Inject userId in new course before saving it
       formData.user = req.apiAuthUserId;
@@ -152,14 +152,22 @@ router.put(
 
       // Find course to be updated and save changes
       const doc = await Course.findOne({ _id: formData._id })
-      console.log('doc', doc)
-        doc.title = course.title;
-        doc.description = course.description;
-        doc.content = course.content;
-        doc.category = course.category;
-        if(req.file) doc.image = course.image;
-        const result = await doc.save()
-        res.status(201).json(result)
+
+      const validation = formData.title && formData.category && formData.user == doc.user;
+      if (!validation) {
+        res
+          .status(400)
+          .json({ message: 'Somethign went wrong' });
+        return;
+      }
+
+      doc.title = course.title;
+      doc.description = course.description;
+      doc.content = course.content;
+      doc.category = course.category;
+      if(req.file) doc.image = course.image;
+      const result = await doc.save()
+      res.status(201).json(result)
       
     } catch(err) {
       next(err)
