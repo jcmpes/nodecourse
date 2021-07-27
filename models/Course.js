@@ -18,6 +18,7 @@ const courseSchema = mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Category',
     },
+    price: Number,
     featuredImage: String,
     video: String,
     description: String,
