@@ -12,22 +12,28 @@ const multer = require('multer');
 const { uploadFile } = require('../../lib/s3');
 const path = require('path');
 
-const UPLOAD_FOLDER = process.env.UPLOAD_FOLDER || "public/images/";
+const UPLOAD_FOLDER = process.env.UPLOAD_FOLDER || 'public/images/';
 
 /**
  * Configurar multer
  */
-const fileExtensionRemover = originalName => {
+const fileExtensionRemover = (originalName) => {
   return originalName.split('.')[0];
 };
 
 const storage = multer.diskStorage({
-  destination: function(req, file, cb) {
+  destination: function (req, file, cb) {
     cb(null, UPLOAD_FOLDER);
   },
-  filename: function(req,file, cb) {
-    cb(null, fileExtensionRemover(file.originalname) + '-' + Date.now() + path.extname(file.originalname))
-  }
+  filename: function (req, file, cb) {
+    cb(
+      null,
+      fileExtensionRemover(file.originalname) +
+        '-' +
+        Date.now() +
+        path.extname(file.originalname),
+    );
+  },
 });
 const upload = multer({ storage });
 
@@ -74,7 +80,11 @@ router.get('/:slug', async function (req, res, next) {
     if (!course) {
       return res.status(404).json({ error: 'not found' });
     }
-    res.json(course);
+    const numFavs = await Favorite.find({
+      'fav.course': course._id,
+    }).countDocuments();
+    const courseWithFavs = { ...course._doc, numFavs };
+    res.json(courseWithFavs);
   } catch (err) {
     next(err);
   }
@@ -146,18 +156,17 @@ router.put(
       if (req.file) {
         // Uplaod file to S3 and add image location to course object
         const file = req.file;
-        const { Location } = await uploadFile(file);        
+        const { Location } = await uploadFile(file);
         course.image = Location;
-      }    
+      }
 
       // Find course to be updated and save changes
-      const doc = await Course.findOne({ _id: formData._id })
+      const doc = await Course.findOne({ _id: formData._id });
 
-      const validation = formData.title && formData.category && formData.user == doc.user;
+      const validation =
+        formData.title && formData.category && formData.user == doc.user;
       if (!validation) {
-        res
-          .status(400)
-          .json({ message: 'Something went wrong' });
+        res.status(400).json({ message: 'Something went wrong' });
         return;
       }
 
@@ -165,16 +174,14 @@ router.put(
       doc.description = course.description;
       doc.content = course.content;
       doc.category = course.category;
-      if(req.file) doc.image = course.image;
-      const result = await doc.save()
-      res.status(201).json(result)
-      
-    } catch(err) {
-      next(err)
+      if (req.file) doc.image = course.image;
+      const result = await doc.save();
+      res.status(201).json(result);
+    } catch (err) {
+      next(err);
     }
-  }
-)
-
+  },
+);
 
 /**
  * DELETE /api/v1/courses/:id
