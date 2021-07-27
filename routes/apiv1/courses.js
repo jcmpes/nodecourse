@@ -113,6 +113,16 @@ router.post(
 
       // Save new course in database
       const newCourse = await course.save();
+
+      // Save new lessons
+      formData.lessons.shift()
+      formData.lessons.forEach((lesson) => {
+        delete lesson.preview;
+        lesson.course = newCourse._id
+        const newLesson = new Lesson(newLesson);
+        newLesson.save()
+      })
+
       res.status(201).json(newCourse);
     } catch (err) {
       next(err);
@@ -131,13 +141,6 @@ router.put(
   async function (req, res, next) {
     try {
       const formData = { ...req.body };
-      // const validation = formData.title && formData.category;
-      // if (!validation) {
-      //   res
-      //     .status(400)
-      //     .json({ message: 'Title and category are both required' });
-      //   return;
-      // }
 
       // Inject userId in new course before saving it
       formData.user = req.apiAuthUserId;

@@ -18,11 +18,17 @@ const courseSchema = mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Category',
     },
-    featuredImage: String,
+    price: { type: Number, required: true },
     video: String,
     description: String,
     content: String,
     image: String,
+    lessons: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Lesson'
+      }
+    ]
   },
   { timestamps: true },
 );
