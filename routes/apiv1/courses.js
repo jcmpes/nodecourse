@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const Category = mongoose.model('Category');
 const Course = mongoose.model('Course');
 const User = mongoose.model('User');
+const Favorite = mongoose.model('Favorite');
 const jwtAuth = require('../../lib/jwAuth');
 
 const multer = require('multer');
