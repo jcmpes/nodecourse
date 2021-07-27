@@ -187,6 +187,7 @@ const initPurchases = async () => {
       paymentCode: '6d3f9a1HkND4xX0hT7cSj7e2d',
       username: 'Sara',
       courses: [],
+
     },
   ]);
 

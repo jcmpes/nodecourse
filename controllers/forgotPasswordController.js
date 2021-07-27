@@ -33,8 +33,8 @@ class ForgotPasswordController {
         const mailObj = {
           from: 'forgot-password@nodecourse.com',
           subject: `Reset password`,
-          recipients: ['oscar.corb@gmail.com'], // <--- For Development (change to desired recepter)
-          // recipients: [email], // <--------------------- For Production
+          // recipients: ['oscar.corb@gmail.com'], // <--- For Development (change to desired recepter)
+          recipients: [email], // <--------------------- For Production
           message: `Here is your password reset link: <a href='${address}'>${address}</a>`,
         };
         //TODO: Make it a verification mail
