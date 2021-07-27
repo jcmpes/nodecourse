@@ -25,7 +25,7 @@ async function main() {
   await initCategories();
   await initCourses();
   await initFavs();
-  await initPurchases();
+  //await initPurchases();
   mongoose.connection.close();
 }
 
@@ -88,6 +88,7 @@ async function initCourses() {
       video: chance.word(),
       description: chance.sentence({ length: 10 }),
       content: chance.paragraph({ sentences: 3 }),
+      price: chance.integer({ min: 10, max: 100 }),
       createdAt: Date.now(),
       image:
         'https://final-project-web-x.s3.amazonaws.com/3dfd522dc764b3f2e647cfa6f22b6e83',
@@ -187,7 +188,6 @@ const initPurchases = async () => {
       paymentCode: '6d3f9a1HkND4xX0hT7cSj7e2d',
       username: 'Sara',
       courses: [],
-
     },
   ]);
 
