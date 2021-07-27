@@ -5,7 +5,7 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const jwtAuth = require('../../lib/jwAuth');
 
-// const Course = mongoose.model('Course');
+const Course = mongoose.model('Course');
 const User = mongoose.model('User');
 const Favorite = mongoose.model('Favorite');
 
@@ -39,6 +39,23 @@ router.get('/myfavs', jwtAuth, async function (req, res, next) {
     const favs = isFav.map((fav) => fav.course);
 
     res.json({ favs });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.get('/myfavsdetails', jwtAuth, async function (req, res, next) {
+  try {
+    const user = req.apiAuthUserId;
+    const favorites = await Favorite.find({ user });
+    const favs = [];
+    for (let i = 0; i < favorites.length; i++) {
+      const course = await Course.findOne({ _id: favorites[i].course })
+        .populate('user')
+        .populate('category');
+      favs.push(course);
+    }
+    res.json({ courses: favs });
   } catch (err) {
     next(err);
   }
