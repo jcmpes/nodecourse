@@ -115,13 +115,15 @@ router.post(
       const newCourse = await course.save();
 
       // Save new lessons
-      formData.lessons.shift()
-      formData.lessons.forEach((lesson) => {
-        delete lesson.preview;
-        lesson.course = newCourse._id
-        const newLesson = new Lesson(newLesson);
-        newLesson.save()
-      })
+      if (formData.lessons) {
+        formData.lessons.shift()
+        formData.lessons.forEach((lesson) => {
+          delete lesson.preview;
+          lesson.course = newCourse._id
+          const newLesson = new Lesson(newLesson);
+          newLesson.save()
+        })
+      }
 
       res.status(201).json(newCourse);
     } catch (err) {
