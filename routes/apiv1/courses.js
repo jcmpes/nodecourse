@@ -51,6 +51,22 @@ const upload = multer({ storage });
 router.get('/', async function (req, res, next) {
   try {
     const title = req.query.title;
+    const price = req.query.price;
+    const username = req.query.user;
+    const categoryname = req.query.category;
+
+    const user = await User.findOne({
+      username: {
+        $regex: `${username}`,
+        $options: 'i',
+      },
+    });
+    const category = await Category.findOne({
+      name: {
+        $regex: `${categoryname}`,
+        $options: 'i',
+      },
+    });
 
     const limit = parseInt(req.query.limit) || 100;
     const skip = parseInt(req.query.skip) || 0;
@@ -63,10 +79,35 @@ router.get('/', async function (req, res, next) {
       filter.title = { $regex: `${title}`, $options: 'i' };
     }
 
+    if (user) {
+      filter.user = user._id;
+    }
+
+    if (category) {
+      filter.category = category._id;
+    }
+
+    if (price) {
+      let rango;
+
+      if (price.indexOf('-') >= 0) {
+        rango = price.split('-');
+        if (rango[0] === '' && rango[1] !== '') {
+          filter.price = { $lte: parseInt(rango[1]) };
+        } else if (rango[0] !== '' && rango[1] === '') {
+          filter.price = { $gte: parseInt(rango[0]) };
+        } else if (rango[0] !== '' && rango[1] !== '') {
+          filter.price = { $gte: parseInt(rango[0]), $lte: parseInt(rango[1]) };
+        }
+      } else {
+        filter.price = price;
+      }
+    }
+
     const result = await Course.list(filter, skip, limit, sort);
     res.json(result);
   } catch (error) {
-    next(err);
+    next(error);
   }
 });
 
