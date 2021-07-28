@@ -74,7 +74,7 @@ router.post('/', jwtAuth, async function (req, res, next) {
       res.status(404).json({ error: 'user not found' });
       return;
     }
-
+    console.log(purchasedCourses);
     // check if any of the purchased courses have already been purchased
     let alreadyPurchased = false;
     purchasedCourses.forEach((course) => {
