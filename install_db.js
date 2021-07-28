@@ -42,6 +42,7 @@ async function initUsers() {
       email: process.env.USER_EMAIL,
       password: await User.hashPassword(process.env.USER_PASSWORD),
       username: 'Pepe',
+      courses: [],
       activated: true,
     },
   ];
@@ -51,6 +52,7 @@ async function initUsers() {
       email: chance.word({ length: i }) + '@achilipu.com',
       password: await User.hashPassword(chance.string({ length: 4 })),
       username: chance.name(),
+      courses: [],
       activated: true,
     });
   }
