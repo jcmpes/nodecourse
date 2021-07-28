@@ -12,6 +12,7 @@ const {
   connectMongoose,
   User,
   Course,
+  Lesson,
   Category,
   Favorite,
   Purchase,
@@ -21,11 +22,12 @@ const { parse } = require('dotenv');
 main().catch((err) => console.error(err));
 
 async function main() {
-  await initUsers();
-  await initCategories();
-  await initCourses();
-  await initFavs();
-  await initPurchases();
+  // await initUsers();
+  // await initCategories();
+  // await initCourses();
+  await initLessons();
+  // await initFavs();
+  // await initPurchases();
   mongoose.connection.close();
 }
 
@@ -84,11 +86,11 @@ async function initCourses() {
       slug: title.replace(' ', '-'),
       user: userC._id,
       category: catC._id,
-      featuredImage: chance.word(),
       video: chance.word(),
       description: chance.sentence({ length: 10 }),
       content: chance.paragraph({ sentences: 3 }),
       createdAt: Date.now(),
+      price: '0',
       image:
         'https://final-project-web-x.s3.amazonaws.com/3dfd522dc764b3f2e647cfa6f22b6e83',
     });
@@ -131,6 +133,15 @@ async function initCategories() {
 
 async function initFavs() {
   const { deletedCount } = await Favorite.deleteMany();
+  console.log(
+    `Eliminado${deletedCount !== 1 ? 's' : ''} ${deletedCount} favorito${
+      deletedCount !== 1 ? 's' : ''
+    }.`,
+  );
+}
+
+async function initLessons() {
+  const { deletedCount } = await Lesson.deleteMany();
   console.log(
     `Eliminado${deletedCount !== 1 ? 's' : ''} ${deletedCount} favorito${
       deletedCount !== 1 ? 's' : ''

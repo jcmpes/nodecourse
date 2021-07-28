@@ -8,13 +8,13 @@ mongoose.plugin(slug);
 
 const lessonSchema = mongoose.Schema(
   {
-    title: { type: String, unique: true, index: true },
-    slug: { type: String, slug: 'title', unique: true },
-    course: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Course',
-    },
-    featuredImage: String,
+    title: { type: String },
+    // slug: { type: String },
+    // course: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   ref: 'Course',
+    // },
+    image: String,
     video: String,
     description: String,
     content: String,
@@ -22,6 +22,6 @@ const lessonSchema = mongoose.Schema(
   { timestamps: true },
 );
 
-const lesson = mongoose.model('lesson', lessonSchema);
+const Lesson = mongoose.model('Lesson', lessonSchema);
 
-module.exports = lesson;
+module.exports = Lesson;
