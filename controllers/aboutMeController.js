@@ -13,4 +13,4 @@ router.get('/', jwtAuth, async function (req, res, next) {
     next(err);
   }
 });
-module.exports = router;
+module.exports = router
