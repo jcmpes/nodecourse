@@ -11,8 +11,8 @@ const {
   mongoose,
   connectMongoose,
   User,
-  Course,
   Category,
+  Course,
   Favorite,
   Purchase,
 } = require('./models');
@@ -25,7 +25,7 @@ async function main() {
   await initCategories();
   await initCourses();
   await initFavs();
-  await initPurchases();
+  //await initPurchases();
   mongoose.connection.close();
 }
 
@@ -42,6 +42,7 @@ async function initUsers() {
       email: process.env.USER_EMAIL,
       password: await User.hashPassword(process.env.USER_PASSWORD),
       username: 'Pepe',
+      courses: [],
       activated: true,
     },
   ];
@@ -51,6 +52,7 @@ async function initUsers() {
       email: chance.word({ length: i }) + '@achilipu.com',
       password: await User.hashPassword(chance.string({ length: 4 })),
       username: chance.name(),
+      courses: [],
       activated: true,
     });
   }
@@ -88,6 +90,7 @@ async function initCourses() {
       video: chance.word(),
       description: chance.sentence({ length: 10 }),
       content: chance.paragraph({ sentences: 3 }),
+      price: chance.integer({ min: 10, max: 100 }),
       createdAt: Date.now(),
       image:
         'https://final-project-web-x.s3.amazonaws.com/3dfd522dc764b3f2e647cfa6f22b6e83',
@@ -147,46 +150,46 @@ const initPurchases = async () => {
 
   const result = await Purchase.insertMany([
     {
-      price: 16.99,
-      date: Date.now(),
+      purchasePrice: 16.99,
+      purchaseDate: Date.now(),
       paymentCode: '1d3f9a1HkND4xX0hT7cSj7e2d',
-      user: await User.findOne({}),
-      courses: await Course.find({}),
+      username: 'Jane',
+      courses: [],
     },
     {
-      price: 20,
-      date: Date.now(),
+      purchasePrice: 20,
+      purchaseDate: Date.now(),
       paymentCode: '2d3f9a1HkND4xX0hT7cSj7e2d',
-      user: await User.findOne({}),
-      courses: await Course.find({}),
+      username: 'John',
+      courses: [],
     },
     {
-      price: 12.5,
-      date: Date.now(),
+      purchasePrice: 12.5,
+      purchaseDate: Date.now(),
       paymentCode: '3d3f9a1HkND4xX0hT7cSj7e2d',
-      user: await User.findOne({}),
-      courses: await Course.find({}),
+      username: 'Juana',
+      courses: [],
     },
     {
-      price: 25,
-      date: Date.now(),
+      purchasePrice: 25,
+      purchaseDate: Date.now(),
       paymentCode: '4d3f9a1HkND4xX0hT7cSj7e2d',
-      user: await User.findOne({}),
-      courses: await Course.find({}),
+      username: 'Juan',
+      courses: [],
     },
     {
-      price: 9.99,
-      date: Date.now(),
+      purchasePrice: 9.99,
+      purchaseDate: Date.now(),
       paymentCode: '5d3f9a1HkND4xX0hT7cSj7e2d',
-      user: await User.findOne({}),
-      courses: await Course.find({}),
+      username: 'Lucas',
+      courses: [],
     },
     {
-      price: 14.99,
-      date: Date.now(),
+      purchasePrice: 14.99,
+      purchaseDate: Date.now(),
       paymentCode: '6d3f9a1HkND4xX0hT7cSj7e2d',
-      user: await User.findOne({}),
-      courses: await Course.find({}),
+      username: 'Sara',
+      courses: [],
     },
   ]);
 
