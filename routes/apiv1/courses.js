@@ -122,8 +122,10 @@ router.post(
             const saved = await oneLessonToSave.save()
             return saved
           }
-          saveLesson().then(saved => {
+          saveLesson().then(async saved => {
+            console.log('LESSON salvada: ', saved)
             course.lessons.push(saved._id)
+            console.log(course.lessons)
           })
         }
       }

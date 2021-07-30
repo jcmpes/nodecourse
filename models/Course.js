@@ -2,7 +2,7 @@
 
 const mongoose = require('mongoose');
 // Import the slug package
-const slug = require('mongoose-slug-generator');
+const slug = require('mongoose-slug-updater');
 // Initialize
 mongoose.plugin(slug);
 
@@ -26,10 +26,10 @@ const courseSchema = mongoose.Schema(
     lessons: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Lesson'
-      }
-    ]
-  },
+        ref: 'Lesson',
+      },
+    ],
+  },  
   { timestamps: true },
 );
 

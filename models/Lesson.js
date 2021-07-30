@@ -2,18 +2,14 @@
 
 const mongoose = require('mongoose');
 // Import the slug package
-const slug = require('mongoose-slug-generator');
+const slug = require('mongoose-slug-updater');
 // Initialize
 mongoose.plugin(slug);
 
 const lessonSchema = mongoose.Schema(
   {
     title: { type: String },
-    // slug: { type: String },
-    // course: {
-    //   type: mongoose.Schema.Types.ObjectId,
-    //   ref: 'Course',
-    // },
+    slug: { type: String, slug: 'title' },
     image: String,
     video: String,
     description: String,
