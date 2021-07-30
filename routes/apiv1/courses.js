@@ -112,8 +112,6 @@ router.post(
         course.image = Location;
       }
 
-      
-
       // Save new lessons
       if (formData.lessons) {
         const lessonsToSave = JSON.parse(formData.lessons)
@@ -127,14 +125,11 @@ router.post(
           saveLesson().then(saved => {
             course.lessons.push(saved._id)
           })
-
         }
-        console.log('array', course.lessons)
       }
 
       // Save new course in database
       const newCourse = await course.save();
-
       res.status(201).json(newCourse);
     } catch (err) {
       next(err);
