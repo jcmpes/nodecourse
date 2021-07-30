@@ -103,7 +103,6 @@ router.post(
 
       // Inject userId in new course before saving it
       formData.user = req.apiAuthUserId;
-      console.log('COURSE FORM DATA TO BE SAVED: ', formData)
       const course = new Course(formData);
 
       if (req.file) {
@@ -116,26 +115,21 @@ router.post(
       
 
       // Save new lessons
-      console.log("formData: ", formData)
       if (formData.lessons) {
         const lessonsToSave = JSON.parse(formData.lessons)
         course.lessons = []
-        console.log('lessonsToSave: ', lessonsToSave)
         for (const key in lessonsToSave) {
           async function saveLesson() {
-            console.log('LESSON TO SAVE: ', lessonsToSave[key])
             const oneLessonToSave = new Lesson(lessonsToSave[key]);
-            const lessonSaved = await oneLessonToSave.save()
-            course.lessons.push(lessonSaved._id)
-            console.log('array de lecciones: ', course.lessons)
-            console.log('new Lesson saved: ', lessonSaved)
+            const saved = await oneLessonToSave.save()
+            return saved
           }
-          saveLesson()
-        
-          console.log('course with lessons: ', course)
+          saveLesson().then(saved => {
+            course.lessons.push(saved._id)
+          })
 
         }
-        
+        console.log('array', course.lessons)
       }
 
       // Save new course in database
