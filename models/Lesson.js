@@ -9,7 +9,7 @@ mongoose.plugin(slug);
 const lessonSchema = mongoose.Schema(
   {
     title: { type: String },
-    slug: { type: String, slug: 'title' },
+    slug: { type: String, slug: 'title', unique: true },
     image: String,
     video: String,
     description: String,

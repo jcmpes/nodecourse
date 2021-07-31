@@ -71,11 +71,32 @@ router.get('/', async function (req, res, next) {
 router.get('/:slug', async function (req, res, next) {
   try {
     const slug = req.params.slug;
-    const course = await Course.findOne({ slug });
+    const course = await Course.findOne({ slug }).populate('lessons',)
     if (!course) {
       return res.status(404).json({ error: 'not found' });
     }
     res.json(course);
+  } catch (err) {
+    next(err);
+  }
+});
+
+/**
+ * GET /api/v1/courses/:slug/:lessonSlug
+ * Return detail of a lesson by its slug
+ */
+ router.get('/:slug/:lessonSlug', async function (req, res, next) {
+  try {
+    const slug = req.params.slug;
+    const lessonSlug = req.params.lessonSlug;
+    const course = await Course.findOne({ slug }).populate('lessons');
+    console.log(course.lessons)
+    const lesson = course.lessons.find(lesson => lesson.slug === lessonSlug)
+    console.log(lessonSlug)
+    if (!course || !lesson) {
+      return res.status(404).json({ error: 'not found' });
+    }
+    res.json(lesson);
   } catch (err) {
     next(err);
   }
@@ -112,8 +133,12 @@ router.post(
         course.image = Location;
       }
 
+      if (!formData.lessons) {
+        // Save new course in database
+        const newCourse = await course.save();
+        res.status(201).json(newCourse);
+      } else {
       // Save new lessons
-      if (formData.lessons) {
         const lessonsToSave = JSON.parse(formData.lessons)
         course.lessons = []
         for (const key in lessonsToSave) {
@@ -126,13 +151,14 @@ router.post(
             console.log('LESSON salvada: ', saved)
             course.lessons.push(saved._id)
             console.log(course.lessons)
+            // Save new course in database
+            const newCourse = await course.save();
+            res.status(201).json(newCourse);
           })
         }
       }
 
-      // Save new course in database
-      const newCourse = await course.save();
-      res.status(201).json(newCourse);
+      
     } catch (err) {
       next(err);
     }
