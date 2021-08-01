@@ -22,7 +22,6 @@ class LoginController {
       }
       const favorites = await Favorite.find({ 'fav.user': usuario._id });
       const favs = favorites.map((fav) => fav.fav.course);
-
       if (
         !usuario ||
         !usuario.activated ||
@@ -48,6 +47,7 @@ class LoginController {
           res.json({
             token: jwtToken,
             displayName: usuario.username,
+            purchased: usuario.courses,
             favs,
           });
         },
@@ -69,6 +69,7 @@ class LoginController {
             loggedWithToken: false,
             displayName: null,
             userID: null,
+            purchased: [],
             favs: [],
           });
         }
@@ -80,11 +81,12 @@ class LoginController {
           loggedWithToken: true,
           displayName: usuario.username,
           userID: jwtToken._id,
+          purchased: usuario.courses,
           favs,
         });
       });
     } catch (err) {
-      err.message = 'caca';
+      err.message = 'Login error';
       next(err);
     }
   }
