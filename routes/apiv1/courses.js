@@ -4,6 +4,7 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 const Category = mongoose.model('Category');
+const Lesson = mongoose.model('Lesson');
 const Course = mongoose.model('Course');
 const User = mongoose.model('User');
 const Favorite = mongoose.model('Favorite');
@@ -118,7 +119,7 @@ router.get('/', async function (req, res, next) {
 router.get('/:slug', async function (req, res, next) {
   try {
     const slug = req.params.slug;
-    const course = await Course.findOne({ slug });
+    const course = await Course.findOne({ slug }).populate('lessons',)
     if (!course) {
       return res.status(404).json({ error: 'not found' });
     }
@@ -127,6 +128,27 @@ router.get('/:slug', async function (req, res, next) {
     }).countDocuments();
     const courseWithFavs = { ...course._doc, numFavs };
     res.json(courseWithFavs);
+  } catch (err) {
+    next(err);
+  }
+});
+
+/**
+ * GET /api/v1/courses/:slug/:lessonSlug
+ * Return detail of a lesson by its slug
+ */
+ router.get('/:slug/:lessonSlug', async function (req, res, next) {
+  try {
+    const slug = req.params.slug;
+    const lessonSlug = req.params.lessonSlug;
+    const course = await Course.findOne({ slug }).populate('lessons');
+    console.log(course.lessons)
+    const lesson = course.lessons.find(lesson => lesson.slug === lessonSlug)
+    console.log(lessonSlug)
+    if (!course || !lesson) {
+      return res.status(404).json({ error: 'not found' });
+    }
+    res.json(lesson);
   } catch (err) {
     next(err);
   }
@@ -163,9 +185,32 @@ router.post(
         course.image = Location;
       }
 
-      // Save new course in database
-      const newCourse = await course.save();
-      res.status(201).json(newCourse);
+      if (!formData.lessons) {
+        // Save new course in database
+        const newCourse = await course.save();
+        res.status(201).json(newCourse);
+      } else {
+      // Save new lessons
+        const lessonsToSave = JSON.parse(formData.lessons)
+        course.lessons = []
+        for (const key in lessonsToSave) {
+          async function saveLesson() {
+            const oneLessonToSave = new Lesson(lessonsToSave[key]);
+            const saved = await oneLessonToSave.save()
+            return saved
+          }
+          saveLesson().then(async saved => {
+            console.log('LESSON salvada: ', saved)
+            course.lessons.push(saved._id)
+            console.log(course.lessons)
+            // Save new course in database
+            const newCourse = await course.save();
+            res.status(201).json(newCourse);
+          })
+        }
+      }
+
+      
     } catch (err) {
       next(err);
     }
@@ -183,13 +228,6 @@ router.put(
   async function (req, res, next) {
     try {
       const formData = { ...req.body };
-      // const validation = formData.title && formData.category;
-      // if (!validation) {
-      //   res
-      //     .status(400)
-      //     .json({ message: 'Title and category are both required' });
-      //   return;
-      // }
 
       // Inject userId in new course before saving it
       formData.user = req.apiAuthUserId;
