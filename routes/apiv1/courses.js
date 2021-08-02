@@ -192,10 +192,13 @@ router.post(
       } else {
       // Save new lessons
         const lessonsToSave = JSON.parse(formData.lessons)
+        console.log('Lessons to save ', lessonsToSave)
         course.lessons = []
-        for (const key in lessonsToSave) {
+        // Make sure lessons get saved in correct order
+        lessonsToSave.sort((a,b) => a - b)
+        for (let i = 0; i < lessonsToSave.length; i++) {
           async function saveLesson() {
-            const oneLessonToSave = new Lesson(lessonsToSave[key]);
+            const oneLessonToSave = new Lesson(lessonsToSave[i]);
             const saved = await oneLessonToSave.save()
             return saved
           }
