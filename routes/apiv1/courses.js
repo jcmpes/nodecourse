@@ -191,11 +191,9 @@ router.post(
       } else {
       // Save new lessons
         const lessonsToSave = JSON.parse(formData.lessons)
-        console.log('Lessons to save ', lessonsToSave)
         course.lessons = []
         // Make sure lessons get saved in correct order
         lessonsToSave.sort((a,b) => a.number - b.number)
-        console.log('LECCIONES ORDENADAS, ', lessonsToSave)
         for (let i = 0; i < lessonsToSave.length; i++) {
           async function saveLesson() {
             const oneLessonToSave = new Lesson(lessonsToSave[i]);
@@ -203,17 +201,13 @@ router.post(
             return saved
           }
           saveLesson().then(async saved => {
-            console.log('LESSON salvada: ', saved)
             course.lessons.push(saved._id)
-            console.log(course.lessons)
             // Save new course in database
             const newCourse = await course.save();
             res.status(201).json(newCourse);
           })
         }
-      }
-
-      
+      }     
     } catch (err) {
       next(err);
     }
