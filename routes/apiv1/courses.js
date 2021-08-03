@@ -142,7 +142,6 @@ router.get('/:slug', async function (req, res, next) {
     const slug = req.params.slug;
     const lessonSlug = req.params.lessonSlug;
     const course = await Course.findOne({ slug }).populate('lessons');
-    console.log(course.lessons)
     const lesson = course.lessons.find(lesson => lesson.slug === lessonSlug)
     console.log(lessonSlug)
     if (!course || !lesson) {
@@ -195,7 +194,8 @@ router.post(
         console.log('Lessons to save ', lessonsToSave)
         course.lessons = []
         // Make sure lessons get saved in correct order
-        lessonsToSave.sort((a,b) => a - b)
+        lessonsToSave.sort((a,b) => a.number - b.number)
+        console.log('LECCIONES ORDENADAS, ', lessonsToSave)
         for (let i = 0; i < lessonsToSave.length; i++) {
           async function saveLesson() {
             const oneLessonToSave = new Lesson(lessonsToSave[i]);
