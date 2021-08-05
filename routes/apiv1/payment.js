@@ -1,15 +1,16 @@
 require('dotenv').config();
 const cors = require('cors')
 const express = require('express')
+const router = express.Router();
 const STRIPE_SECRET = process.env.STRIPE_SECRET
 const stripe = require('stripe')(STRIPE_SECRET)
 const { v4: uuid } = require('uuid');
 
 
-app.post('/payment', (req, res) => {
-  const {product, token} = req.body;
-  console.log("PRODUCT: ", product);
-  console.log("PRODUCT PRICE: ", product.price);
+router.post('/', (req, res) => {
+  const {course, token} = req.body;
+  console.log("PRODUCT: ", course);
+  console.log("PRODUCT PRICE: ", course.price);
   const itempotencyKey = uuid()
 
   return stripe.customers.create({
@@ -17,11 +18,11 @@ app.post('/payment', (req, res) => {
     source: token.id
   }).then(customer => {
     stripe.charges.create({
-      amount: product.price * 100,
+      amount: course.price * 100,
       currency: 'usd',
       customer: customer.id,
       recipient_email: token.email,
-      description: product.name,
+      description: course.title,
       shipping: {
         name: token.card.name,
         address: {
@@ -33,3 +34,5 @@ app.post('/payment', (req, res) => {
   .catch(err => console.log(err))
 
 })
+
+module.exports = router;
