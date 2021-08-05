@@ -7,6 +7,7 @@ const User = mongoose.model('User');
 const Purchase = mongoose.model('Purchase');
 const Course = mongoose.model('Course');
 const jwtAuth = require('../../lib/jwAuth');
+const sendEmail = require('../../lib/mailing');
 
 /**
  * Get /api/v1/purchases/user
@@ -109,6 +110,41 @@ router.post('/', jwtAuth, async function (req, res, next) {
 
     const purchase = new Purchase(purchaseData);
     const newPurchase = await purchase.save();
+
+    const mailObjCoustomer = {
+      from: 'purchases@nodecourse.com',
+      subject: `Thank you, ${user.username}`,
+      recipients: [user.email],
+      message: `Your purchase has been completed. Enjoy your learning:<br>
+      `,
+    };
+
+    for (let i = 0; i < newPurchase.purchasedCourses.length; i++) {
+      await Course.findOne({
+        _id: newPurchase.purchasedCourses[i],
+      })
+        .then(async (course) => {
+          mailObjCoustomer.message += `<br>- ${course.title}`;
+
+          await User.findOne({ _id: course.user })
+            .then((userTeacher) => {
+              const mailObjTeacher = {
+                from: 'purchases@nodecourse.com',
+                subject: `Congratulations, ${userTeacher.username}`,
+                recipients: [userTeacher.email],
+                message: `One of your courses has been purchased:<br>
+              ${course.title}
+              ${user.username} is your new alumn.<br>Greetings.`,
+              };
+              sendEmail(mailObjTeacher);
+            })
+            .catch(console.log);
+        })
+        .catch(console.log);
+    }
+
+    sendEmail(mailObjCoustomer);
+
     res.status(201).json({ newPurchaseCreated: newPurchase });
   } catch (error) {
     next(error);

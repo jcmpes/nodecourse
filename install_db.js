@@ -5,6 +5,7 @@ var chance = new Chance();
 
 const { ObjectId } = require('bson');
 const fs = require('fs');
+const txtgen = require('txtgen');
 
 // eslint-disable-next-line no-unused-vars
 const {
@@ -14,7 +15,6 @@ const {
   Course,
   Lesson,
   Category,
-  Course,
   Favorite,
   Purchase,
 } = require('./models');
@@ -23,11 +23,11 @@ const { parse } = require('dotenv');
 main().catch((err) => console.error(err));
 
 async function main() {
-  // await initUsers();
-  // await initCategories();
-  // await initCourses();
-  await initLessons();
-  // await initFavs();
+  await initUsers();
+  await initCategories();
+  await initCourses();
+  // await initLessons();
+  await initFavs();
   // await initPurchases();
   mongoose.connection.close();
 }
@@ -79,7 +79,7 @@ async function initCourses() {
   const courses = [];
 
   for (let i = 3; i < 20; i++) {
-    const title = chance.sentence({ words: 4 });
+    const title = txtgen.sentence();
     const R = Math.floor(Math.random() * 11);
     const userC = await User.findOne({}).limit(1).skip(R);
     const RCat = Math.floor(Math.random() * 20);
@@ -90,11 +90,10 @@ async function initCourses() {
       user: userC._id,
       category: catC._id,
       video: chance.word(),
-      description: chance.sentence({ length: 10 }),
+      description: txtgen.paragraph(),
       content: chance.paragraph({ sentences: 3 }),
       price: chance.integer({ min: 10, max: 100 }),
       createdAt: Date.now(),
-      price: '0',
       image:
         'https://final-project-web-x.s3.amazonaws.com/3dfd522dc764b3f2e647cfa6f22b6e83',
     });
