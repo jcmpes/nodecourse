@@ -122,20 +122,25 @@ router.post('/', jwtAuth, async function (req, res, next) {
     for (let i = 0; i < newPurchase.purchasedCourses.length; i++) {
       await Course.findOne({
         _id: newPurchase.purchasedCourses[i],
-      }).then(async (course) => {
-        mailObjCoustomer.message += `<br>- ${course.title}`;
+      })
+        .then(async (course) => {
+          mailObjCoustomer.message += `<br>- ${course.title}`;
 
-        await User.findOne({ user: course.user }).then((userTeacher) => {
-          const mailObjTeacher = {
-            from: 'purchases@nodecourse.com',
-            subject: `Congratulations, ${userTeacher.username}`,
-            recipients: [userTeacher.email],
-            message: `One of your courses has been purchased:<br>
-            ${course.title}
-            ${user.username} is your new alumn.<br>Greetings.`,
-          };
-        });
-      });
+          await User.findOne({ _id: course.user })
+            .then((userTeacher) => {
+              const mailObjTeacher = {
+                from: 'purchases@nodecourse.com',
+                subject: `Congratulations, ${userTeacher.username}`,
+                recipients: [userTeacher.email],
+                message: `One of your courses has been purchased:<br>
+              ${course.title}
+              ${user.username} is your new alumn.<br>Greetings.`,
+              };
+              sendEmail(mailObjTeacher);
+            })
+            .catch(console.log);
+        })
+        .catch(console.log);
     }
 
     sendEmail(mailObjCoustomer);

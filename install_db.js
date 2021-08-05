@@ -5,6 +5,7 @@ var chance = new Chance();
 
 const { ObjectId } = require('bson');
 const fs = require('fs');
+const txtgen = require('txtgen');
 
 // eslint-disable-next-line no-unused-vars
 const {
@@ -27,7 +28,7 @@ async function main() {
   await initCourses();
   // await initLessons();
   await initFavs();
-  await initPurchases();
+  // await initPurchases();
   mongoose.connection.close();
 }
 
@@ -78,22 +79,21 @@ async function initCourses() {
   const courses = [];
 
   for (let i = 3; i < 20; i++) {
-    const title = chance.sentence({ words: 4 });
+    const title = txtgen.sentence();
     const R = Math.floor(Math.random() * 11);
     const userC = await User.findOne({}).limit(1).skip(R);
     const RCat = Math.floor(Math.random() * 20);
     const catC = await Category.findOne({}).limit(1).skip(RCat);
     courses.push({
       title,
-      slug: title,
+      slug: title.replace(' ', '-'),
       user: userC._id,
       category: catC._id,
       video: chance.word(),
-      description: chance.sentence({ length: 10 }),
+      description: txtgen.paragraph(),
       content: chance.paragraph({ sentences: 3 }),
       price: chance.integer({ min: 10, max: 100 }),
       createdAt: Date.now(),
-      price: '0',
       image:
         'https://final-project-web-x.s3.amazonaws.com/3dfd522dc764b3f2e647cfa6f22b6e83',
     });
