@@ -14,7 +14,6 @@ const {
   Course,
   Lesson,
   Category,
-  Course,
   Favorite,
   Purchase,
 } = require('./models');
@@ -23,12 +22,12 @@ const { parse } = require('dotenv');
 main().catch((err) => console.error(err));
 
 async function main() {
-  // await initUsers();
-  // await initCategories();
-  // await initCourses();
-  await initLessons();
-  // await initFavs();
-  // await initPurchases();
+  await initUsers();
+  await initCategories();
+  await initCourses();
+  // await initLessons();
+  await initFavs();
+  await initPurchases();
   mongoose.connection.close();
 }
 
@@ -86,7 +85,7 @@ async function initCourses() {
     const catC = await Category.findOne({}).limit(1).skip(RCat);
     courses.push({
       title,
-      slug: title.replace(' ', '-'),
+      slug: title,
       user: userC._id,
       category: catC._id,
       video: chance.word(),
