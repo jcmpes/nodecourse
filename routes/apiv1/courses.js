@@ -69,7 +69,7 @@ router.get('/', async function (req, res, next) {
       },
     });
 
-    const limit = parseInt(req.query.limit) || 100;
+    const limit = parseInt(req.query.limit) || 10;
     const skip = parseInt(req.query.skip) || 0;
     const sort = req.query.sort || { _id: -1 };
 
@@ -105,6 +105,8 @@ router.get('/', async function (req, res, next) {
       }
     }
 
+    console.log(limit);
+
     const result = await Course.list(filter, skip, limit, sort);
     res.json(result);
   } catch (error) {
@@ -119,7 +121,7 @@ router.get('/', async function (req, res, next) {
 router.get('/:slug', async function (req, res, next) {
   try {
     const slug = req.params.slug;
-    const course = await Course.findOne({ slug }).populate('lessons',)
+    const course = await Course.findOne({ slug }).populate('lessons');
     if (!course) {
       return res.status(404).json({ error: 'not found' });
     }
@@ -137,13 +139,15 @@ router.get('/:slug', async function (req, res, next) {
  * GET /api/v1/courses/:slug/:lessonSlug
  * Return detail of a lesson by its slug
  */
- router.get('/:slug/:lessonSlug', async function (req, res, next) {
+router.get('/:slug/:lessonSlug', async function (req, res, next) {
   try {
     const slug = req.params.slug;
     const lessonSlug = req.params.lessonSlug;
     const course = await Course.findOne({ slug }).populate('lessons');
+
     const lesson = course.lessons.find(lesson => lesson.slug === lessonSlug)
     console.log(lessonSlug)
+
     if (!course || !lesson) {
       return res.status(404).json({ error: 'not found' });
     }
@@ -189,6 +193,7 @@ router.post(
         const newCourse = await course.save();
         res.status(201).json(newCourse);
       } else {
+
       // Save new lessons
         const lessonsToSave = JSON.parse(formData.lessons)
         course.lessons = []
@@ -202,12 +207,15 @@ router.post(
           }
           saveLesson().then(async saved => {
             course.lessons.push(saved._id)
+
             // Save new course in database
             const newCourse = await course.save();
             res.status(201).json(newCourse);
-          })
+          });
         }
+
       }     
+
     } catch (err) {
       next(err);
     }

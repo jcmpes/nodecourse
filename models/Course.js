@@ -29,13 +29,14 @@ const courseSchema = mongoose.Schema(
         ref: 'Lesson',
       },
     ],
-  },  
+  },
   { timestamps: true },
 );
 
 courseSchema.statics.list = async function (filter, skip, limit, sort) {
   const query = Course.find(filter).populate('user').populate('category');
-  query.sort(sort);
+  console.log('Sort ', sort);
+  query.sort({ _id: sort });
   query.skip(skip);
   query.limit(limit);
 
