@@ -144,9 +144,10 @@ router.get('/:slug/:lessonSlug', async function (req, res, next) {
     const slug = req.params.slug;
     const lessonSlug = req.params.lessonSlug;
     const course = await Course.findOne({ slug }).populate('lessons');
-    console.log(course.lessons);
-    const lesson = course.lessons.find((lesson) => lesson.slug === lessonSlug);
-    console.log(lessonSlug);
+
+    const lesson = course.lessons.find(lesson => lesson.slug === lessonSlug)
+    console.log(lessonSlug)
+
     if (!course || !lesson) {
       return res.status(404).json({ error: 'not found' });
     }
@@ -192,25 +193,29 @@ router.post(
         const newCourse = await course.save();
         res.status(201).json(newCourse);
       } else {
-        // Save new lessons
-        const lessonsToSave = JSON.parse(formData.lessons);
-        course.lessons = [];
-        for (const key in lessonsToSave) {
+
+      // Save new lessons
+        const lessonsToSave = JSON.parse(formData.lessons)
+        course.lessons = []
+        // Make sure lessons get saved in correct order
+        lessonsToSave.sort((a,b) => a.number - b.number)
+        for (let i = 0; i < lessonsToSave.length; i++) {
           async function saveLesson() {
-            const oneLessonToSave = new Lesson(lessonsToSave[key]);
-            const saved = await oneLessonToSave.save();
-            return saved;
+            const oneLessonToSave = new Lesson(lessonsToSave[i]);
+            const saved = await oneLessonToSave.save()
+            return saved
           }
-          saveLesson().then(async (saved) => {
-            console.log('LESSON salvada: ', saved);
-            course.lessons.push(saved._id);
-            console.log(course.lessons);
+          saveLesson().then(async saved => {
+            course.lessons.push(saved._id)
+
             // Save new course in database
             const newCourse = await course.save();
             res.status(201).json(newCourse);
           });
         }
-      }
+
+      }     
+
     } catch (err) {
       next(err);
     }

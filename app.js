@@ -41,6 +41,7 @@ app.use('/api/v1/categories', require('./routes/apiv1/categories'));
 
 // API purchases
 app.use('/api/v1/purchases', require('./routes/apiv1/purchases'));
+app.use('/api/v1/payment', require('./routes/apiv1/payment'));
 
 // API users
 app.use('/api/v1/user', require('./routes/apiv1/users'));

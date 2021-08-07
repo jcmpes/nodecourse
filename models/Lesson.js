@@ -13,6 +13,7 @@ const lessonSchema = mongoose.Schema(
     video: String,
     description: String,
     content: String,
+    number: Number,
   },
   { timestamps: true },
 );

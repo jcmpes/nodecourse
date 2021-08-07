@@ -36,6 +36,7 @@ jobs:
         echo AWS_BUCKET_REGION=${{ secrets.AWS_BUCKET_REGION }} >> .env
         echo AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }} >> .env
         echo AWS_SECRET_KEY=${{ secrets.AWS_SECRET_KEY }} >> .env
+        echo STRIPE_SECRET=${{ secrets.STRIPE_SECRET }} >> .env
         
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v2
