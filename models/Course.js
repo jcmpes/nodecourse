@@ -35,8 +35,7 @@ const courseSchema = mongoose.Schema(
 
 courseSchema.statics.list = async function (filter, skip, limit, sort) {
   const query = Course.find(filter).populate('user').populate('category');
-  console.log('Sort ', sort);
-  query.sort({ _id: sort });
+  query.sort(sort);
   query.skip(skip);
   query.limit(limit);
 
