@@ -167,6 +167,7 @@ router.post(
   upload.single('image'),
   async function (req, res, next) {
     try {
+      console.log("Save course")
       // Server side validation
       const formData = { ...req.body };
       const validation = formData.title && formData.category;
@@ -184,12 +185,15 @@ router.post(
       if (req.file) {
         // Uplaod file to S3 and add image location to course object
         const file = req.file;
-        const { Location } = await uploadFile(file);
+        const Location = req.file.path
+        // const { Location } = await uploadFile(file);
         course.image = Location;
       }
 
-      if (!formData.lessons) {
+
+      if (JSON.parse(formData.lessons).length === 0) {
         // Save new course in database
+        course.lessons = undefined
         const newCourse = await course.save();
         res.status(201).json(newCourse);
       } else {
