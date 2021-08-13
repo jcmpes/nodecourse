@@ -190,18 +190,23 @@ router.post(
       formData.user = req.apiAuthUserId;
       const course = new Course(formData);
 
+      // Inject category
+      const name = formData.category;
+      const categoryId = await Category.findOne({ name })
+      course.category = categoryId
+
       if (req.file) {
         // Uplaod file to S3 and add image location to course object
         const file = req.file;
-        const Location = req.file.path
-        // const { Location } = await uploadFile(file);
+        // const Location = req.file.path
+        const { Location } = await uploadFile(file);
         course.image = Location;
       }
 
-
-      if (JSON.parse(formData.lessons).length === 0) {
+      if (formData.lessons === '[]') {
         // Save new course in database
         course.lessons = undefined
+        console.log("Course to save", course)
         const newCourse = await course.save();
         res.status(201).json(newCourse);
       } else {
