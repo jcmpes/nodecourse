@@ -9,6 +9,8 @@ const Course = mongoose.model('Course');
 const User = mongoose.model('User');
 const Favorite = mongoose.model('Favorite');
 const jwtAuth = require('../../lib/jwAuth');
+const fs = require('fs');
+
 
 const multer = require('multer');
 const { uploadFile } = require('../../lib/s3');
@@ -25,7 +27,13 @@ const fileExtensionRemover = (originalName) => {
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, UPLOAD_FOLDER);
+    fs.stat(UPLOAD_FOLDER, function(err, stats) {
+      if (err) {
+        return fs.mkdirSync(UPLOAD_FOLDER)
+      } else {
+        cb(null, UPLOAD_FOLDER);
+      }
+    })
   },
   filename: function (req, file, cb) {
     cb(
