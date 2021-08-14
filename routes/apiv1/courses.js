@@ -286,9 +286,13 @@ router.put(
  * DELETE /api/v1/courses/:id
  * Delete an existing course
  */
-router.delete('/:id', async function (req, res, next) {
+router.delete('/:id', jwtAuth, async function (req, res, next) {
   try {
     const _id = req.params.id;
+    const course = await Course.findOne({ _id });
+    if (course.user !== req.apiAuthUserId) {
+      return
+    }
     const deleted = await Course.deleteOne({ _id });
     res.status(200).json({ deleted });
   } catch (err) {
