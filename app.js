@@ -38,7 +38,6 @@ app.use('/api/v1/courses', require('./routes/apiv1/courses'));
 // API categories
 app.use('/api/v1/categories', require('./routes/apiv1/categories'));
 
-
 // API purchases
 app.use('/api/v1/purchases', require('./routes/apiv1/purchases'));
 

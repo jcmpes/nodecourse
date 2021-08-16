@@ -10,8 +10,6 @@ const User = mongoose.model('User');
 const Favorite = mongoose.model('Favorite');
 const jwtAuth = require('../../lib/jwAuth');
 const fs = require('fs');
-
-
 const multer = require('multer');
 const { uploadFile } = require('../../lib/s3');
 const path = require('path');
@@ -112,9 +110,6 @@ router.get('/', async function (req, res, next) {
         filter.price = price;
       }
     }
-
-    console.log(limit);
-
     const result = await Course.list(filter, skip, limit, sort);
     res.json(result);
   } catch (error) {
@@ -154,7 +149,6 @@ router.get('/:slug/:lessonSlug', async function (req, res, next) {
     const course = await Course.findOne({ slug }).populate('lessons');
 
     const lesson = course.lessons.find((lesson) => lesson.slug === lessonSlug);
-    console.log(lessonSlug);
 
     if (!course || !lesson) {
       return res.status(404).json({ error: 'not found' });
@@ -175,7 +169,6 @@ router.post(
   upload.single('image'),
   async function (req, res, next) {
     try {
-      console.log("Save course")
       // Server side validation
       const formData = { ...req.body };
       const validation = formData.title && formData.category;
@@ -206,7 +199,6 @@ router.post(
       if (formData.lessons === '[]') {
         // Save new course in database
         course.lessons = undefined
-        console.log("Course to save", course)
         const newCourse = await course.save();
         res.status(201).json(newCourse);
       } else {
@@ -290,10 +282,10 @@ router.delete('/:id', jwtAuth, async function (req, res, next) {
   try {
     const _id = req.params.id;
     const course = await Course.findOne({ _id });
-    if (course.user !== req.apiAuthUserId) {
-      return
+    if (course.user != req.apiAuthUserId) {
+      return res.status(401).json({ message: 'Unauthorized' })
     }
-    const deleted = await Course.deleteOne({ _id });
+    const deleted = await Course.findOneAndDelete({ _id });
     res.status(200).json({ deleted });
   } catch (err) {
     next(err);
