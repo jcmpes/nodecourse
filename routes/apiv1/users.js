@@ -17,7 +17,7 @@ router.get('/:username', async function (req, res, next) {
     }
     const courses = await Course.find({ user: user._id })
       .sort({ _id: -1 })
-      .populate('user')
+      .populate('user', 'username')
       .populate('category');
     res.json({ courses });
   } catch (err) {
