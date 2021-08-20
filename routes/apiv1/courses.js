@@ -244,6 +244,11 @@ router.put(
       formData.user = req.apiAuthUserId;
       const course = new Course(formData);
 
+      // Inject category
+      const name = formData.category;
+      const categoryId = await Category.findOne({ name })
+      course.category = categoryId
+
       if (req.file) {
         // Uplaod file to S3 and add image location to course object
         const file = req.file;
