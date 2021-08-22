@@ -56,7 +56,7 @@ router.get('/myfavsdetails', jwtAuth, async function (req, res, next) {
       const course = await Course.findOne({ _id: favorites[i].fav.course })
         .populate('user', 'username')
         .populate('category');
-      favs.push(course);
+      if (course) favs.push(course);
     }
     res.json({ courses: favs });
   } catch (err) {
