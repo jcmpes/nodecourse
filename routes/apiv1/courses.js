@@ -284,6 +284,7 @@ router.put(
       doc.title = course.title;
       doc.description = course.description;
       doc.content = course.content;
+      doc.video = course.video;
       doc.category = course.category;
       if (req.file) doc.image = course.image;
       const result = await doc.save();
