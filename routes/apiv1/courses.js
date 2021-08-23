@@ -124,7 +124,9 @@ router.get('/', async function (req, res, next) {
 router.get('/:slug', async function (req, res, next) {
   try {
     const slug = req.params.slug;
-    const course = await Course.findOne({ slug }).populate('lessons');
+    const course = await Course.findOne({ slug })
+      .populate('lessons')
+      .populate('user', 'username');
     if (!course) {
       return res.status(404).json({ error: 'not found' });
     }
@@ -162,7 +164,6 @@ router.get('/:slug/:lessonSlug', async function (req, res, next) {
 
     lesson2.username = course.user.username;
     lesson2.lessons = course.lessons.length;
-    console.log('BACK LESSON', lesson2);
 
     if (!course || !lesson) {
       return res.status(404).json({ error: 'not found' });
