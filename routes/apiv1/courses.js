@@ -25,13 +25,13 @@ const fileExtensionRemover = (originalName) => {
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    fs.stat(UPLOAD_FOLDER, function(err, stats) {
+    fs.stat(UPLOAD_FOLDER, function (err, stats) {
       if (err) {
-        return fs.mkdirSync(UPLOAD_FOLDER)
+        return fs.mkdirSync(UPLOAD_FOLDER);
       } else {
         cb(null, UPLOAD_FOLDER);
       }
-    })
+    });
   },
   filename: function (req, file, cb) {
     cb(
@@ -146,14 +146,28 @@ router.get('/:slug/:lessonSlug', async function (req, res, next) {
   try {
     const slug = req.params.slug;
     const lessonSlug = req.params.lessonSlug;
-    const course = await Course.findOne({ slug }).populate('lessons');
+    const course = await Course.findOne({ slug })
+      .populate('lessons')
+      .populate('user', 'username');
 
-    const lesson = course.lessons.find((lesson) => lesson.slug === lessonSlug);
+    const lesson = await course.lessons.find(
+      (lesson) => lesson.slug === lessonSlug,
+    );
+
+    const lesson2 = {
+      ...lesson._doc,
+      username: '',
+      lessons: 0,
+    };
+
+    lesson2.username = course.user.username;
+    lesson2.lessons = course.lessons.length;
+    console.log('BACK LESSON', lesson2);
 
     if (!course || !lesson) {
       return res.status(404).json({ error: 'not found' });
     }
-    res.json(lesson);
+    res.json(lesson2);
   } catch (err) {
     next(err);
   }
@@ -185,8 +199,8 @@ router.post(
 
       // Inject category
       const name = formData.category;
-      const categoryId = await Category.findOne({ name })
-      course.category = categoryId
+      const categoryId = await Category.findOne({ name });
+      course.category = categoryId;
 
       if (req.file) {
         // Uplaod file to S3 and add image location to course object
@@ -198,7 +212,7 @@ router.post(
 
       if (formData.lessons === '[]') {
         // Save new course in database
-        course.lessons = undefined
+        course.lessons = undefined;
         const newCourse = await course.save();
         res.status(201).json(newCourse);
       } else {
@@ -246,8 +260,8 @@ router.put(
 
       // Inject category
       const name = formData.category;
-      const categoryId = await Category.findOne({ name })
-      course.category = categoryId
+      const categoryId = await Category.findOne({ name });
+      course.category = categoryId;
 
       if (req.file) {
         // Uplaod file to S3 and add image location to course object
@@ -289,7 +303,7 @@ router.delete('/:id', jwtAuth, async function (req, res, next) {
     const _id = req.params.id;
     const course = await Course.findOne({ _id });
     if (course.user != req.apiAuthUserId) {
-      return res.status(401).json({ message: 'Unauthorized' })
+      return res.status(401).json({ message: 'Unauthorized' });
     }
     const deleted = await Course.findOneAndDelete({ _id });
     res.status(200).json({ deleted });
