@@ -41,6 +41,9 @@ app.use('/api/v1/categories', require('./routes/apiv1/categories'));
 // API purchases
 app.use('/api/v1/purchases', require('./routes/apiv1/purchases'));
 
+// Stripe PaymentIntent
+app.use('/api/v1/paymentIntent', require('./routes/apiv1/paymentIntent'));
+
 // API users
 app.use('/api/v1/user', require('./routes/apiv1/users'));
 
