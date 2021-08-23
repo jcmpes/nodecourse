@@ -284,6 +284,9 @@ router.put(
       doc.title = course.title;
       doc.description = course.description;
       doc.content = course.content;
+      doc.requirements = course.requirements;
+      doc.whatYouWillLearn = course.whatYouWillLearn;
+      doc.level = course.level;
       doc.video = course.video;
       doc.category = course.category;
       if (req.file) doc.image = course.image;

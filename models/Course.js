@@ -22,6 +22,9 @@ const courseSchema = mongoose.Schema(
     video: String,
     description: String,
     content: String,
+    requirements: String,
+    whatYouWillLearn: String,
+    level: Number,
     image: String,
     lessons: [
       {
