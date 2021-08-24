@@ -2,6 +2,9 @@
 
 const express = require('express');
 const Course = require('../../models/Course');
+const jwtAuth = require('../../lib/jwAuth');
+const mongoose = require('mongoose');
+const { Purchase } = require('../../models');
 const router = express.Router();
 require('dotenv').config();
 
@@ -23,13 +26,25 @@ async function calculateOrderAmount(items) {
   }
 }
 
-router.post('/create-payment-intent', async (req, res) => {
+router.post('/create-payment-intent', jwtAuth, async (req, res) => {
+  console.log('USER', req.apiAuthUserId);
   const { items } = req.body;
+  console.log(items);
   // Create a PaymentIntent with the order amount and currency
   const paymentIntent = await stripe.paymentIntents.create({
     amount: await calculateOrderAmount(items),
     currency: 'eur',
   });
+  console.log('PAYMENT INTENT', paymentIntent);
+  // Save payment intent in DB
+  const newPayment = new Purchase({
+    username: mongoose.Types.ObjectId(req.apiAuthUserId),
+    purchasedCourses: items,
+    purchasePrice: paymentIntent.amount,
+    purchaseDate: new Date(),
+    paymentCode: paymentIntent.id,
+  });
+  await newPayment.save();
   res.send({
     clientSecret: paymentIntent.client_secret,
   });
