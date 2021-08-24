@@ -27,24 +27,27 @@ async function calculateOrderAmount(items) {
 }
 
 router.post('/create-payment-intent', jwtAuth, async (req, res) => {
-  console.log('USER', req.apiAuthUserId);
   const { items } = req.body;
-  console.log(items);
+
   // Create a PaymentIntent with the order amount and currency
   const paymentIntent = await stripe.paymentIntents.create({
     amount: await calculateOrderAmount(items),
     currency: 'eur',
   });
-  console.log('PAYMENT INTENT', paymentIntent);
+
   // Save payment intent in DB
+  const { amount, id, status } = paymentIntent;
   const newPayment = new Purchase({
     username: mongoose.Types.ObjectId(req.apiAuthUserId),
     purchasedCourses: items,
-    purchasePrice: paymentIntent.amount,
+    purchasePrice: amount,
     purchaseDate: new Date(),
-    paymentCode: paymentIntent.id,
+    paymentCode: id,
+    status: status
   });
   await newPayment.save();
+
+  // Send response to client
   res.send({
     clientSecret: paymentIntent.client_secret,
   });
