@@ -16,7 +16,7 @@ const purchaseSchema = mongoose.Schema({
   purchasePrice: Number,
   purchaseDate: Date,
   paymentCode: String,
-  status: String
+  status: String,
 });
 
 const Purchase = mongoose.model('Purchase', purchaseSchema);

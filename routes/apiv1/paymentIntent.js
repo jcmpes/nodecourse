@@ -43,13 +43,23 @@ router.post('/create-payment-intent', jwtAuth, async (req, res) => {
     purchasePrice: amount,
     purchaseDate: new Date(),
     paymentCode: id,
-    status: status
+    status: status,
   });
-  await newPayment.save();
-
+  const savedPayment = await newPayment.save();
+  console.log("SAVED PAYMENT ", savedPayment)
   // Send response to client
   res.send({
     clientSecret: paymentIntent.client_secret,
+  });
+});
+
+router.post('/notify-payment-success', async (req, res) => {
+  console.log('REQ BODY', req.body);
+  // Save purchase succeded to DB
+  const { id, status } = req.body;
+  const updatedPurchase = await Purchase.updateOne({ paymentCode: id }, { status: status })
+  res.send({
+    message: updatedPurchase.ok,
   });
 });
 
