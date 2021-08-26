@@ -37,9 +37,9 @@ main().catch((err) => console.error(err));
 async function main() {
   await initUsers();
   await initCategories();
+  await initLevels();
   await initCourses();
   await initLessons();
-  await initLevels();
   await initFavs();
   await initPurchases();
   mongoose.connection.close();
