@@ -46,21 +46,23 @@ router.post('/create-payment-intent', jwtAuth, async (req, res) => {
     status: status,
   });
   const savedPayment = await newPayment.save();
-  console.log("SAVED PAYMENT ", savedPayment)
+
   // Send response to client
   res.send({
     clientSecret: paymentIntent.client_secret,
   });
 });
 
-router.post('/notify-payment-success', async (req, res) => {
-  console.log('REQ BODY', req.body);
-  // Save purchase succeded to DB
-  const { id, status } = req.body;
-  const updatedPurchase = await Purchase.updateOne({ paymentCode: id }, { status: status })
-  res.send({
-    message: updatedPurchase.ok,
-  });
+router.post('/webhook', async (req, res) => {
+  const { type, data } = req.body;
+
+  if (type === 'payment_intent.succeeded') {
+    await Purchase.updateOne(
+      { paymentCode: data.object.id },
+      { status: data.object.status }
+      );
+    res.sendStatus(200);
+  }
 });
 
 module.exports = router;
