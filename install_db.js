@@ -98,6 +98,8 @@ async function initCourses() {
     const userC = await User.findOne({}).limit(1).skip(R);
     const RCat = Math.floor(Math.random() * categoryNames.length);
     const catC = await Category.findOne({}).limit(1).skip(RCat);
+    const RLev = Math.floor(Math.random() * levelNames.length);
+    const levC = await Level.findOne({}).limit(1).skip(RCat);
     const newOne = new Course({
       title,
       user: userC._id,
@@ -107,7 +109,7 @@ async function initCourses() {
       content: chance.paragraph({ sentences: 3 }),
       requirements: txtgen.sentence(),
       whatYouWillLearn: txtgen.sentence(),
-      level: chance.integer({ min: 0, max: 3 }),
+      level: levC._id,
       price: chance.integer({ min: 10, max: 100 }),
       createdAt: Date.now(),
       image: images[Math.floor(Math.random() * images.length)],
