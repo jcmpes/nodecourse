@@ -18,6 +18,10 @@ const courseSchema = mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Category',
     },
+    // level: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   ref: 'Level',
+    // },
     price: { type: Number, required: true },
     video: String,
     description: String,

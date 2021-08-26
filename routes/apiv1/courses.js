@@ -61,6 +61,7 @@ router.get('/', async function (req, res, next) {
     const price = req.query.price;
     const username = req.query.user;
     const categoryname = req.query.category;
+    const level = req.query.level;
 
     const user = await User.findOne({
       username: {
@@ -92,6 +93,9 @@ router.get('/', async function (req, res, next) {
 
     if (category) {
       filter.category = category._id;
+    }
+    if (level) {
+      filter.level = level;
     }
 
     if (price) {
