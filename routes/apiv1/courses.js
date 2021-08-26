@@ -136,6 +136,7 @@ router.get('/:slug', async function (req, res, next) {
   try {
     const slug = req.params.slug;
     const course = await Course.findOne({ slug })
+      .populate('level')
       .populate('lessons')
       .populate('user', 'username');
     if (!course) {
