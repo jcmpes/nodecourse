@@ -14,6 +14,7 @@ const {
   User,
   Course,
   Lesson,
+  Level,
   Category,
   Favorite,
   Purchase,
@@ -21,6 +22,8 @@ const {
 const { parse } = require('dotenv');
 
 const categoryNames = ['Sciences', 'Arts', 'Programming', 'Sports'];
+const levelNames = ['Basic', 'Medium', 'Hard', 'Expert'];
+
 const images = [
   'https://final-project-web-x.s3.amazonaws.com/test-1628981970289.jpg',
   'https://final-project-web-x.s3.amazonaws.com/3dfd522dc764b3f2e647cfa6f22b6e83',
@@ -36,6 +39,7 @@ async function main() {
   await initCategories();
   await initCourses();
   await initLessons();
+  await initLevels();
   await initFavs();
   await initPurchases();
   mongoose.connection.close();
@@ -120,7 +124,8 @@ async function initCourses() {
         content: txtgen.paragraph(),
         number: i,
       });
-      await newLesson.save();
+      const saved = await newLesson.save();
+      // const saved = await Lesson.insertMany([newLesson]);
       lessons.push(newLesson);
     }
     newOne.lessons = lessons;
@@ -159,6 +164,30 @@ async function initCategories() {
   );
 }
 
+async function initLevels() {
+  const { deletedCount } = await Level.deleteMany();
+  console.log(
+    `Eliminado${deletedCount !== 1 ? 's' : ''} ${deletedCount} nivel${
+      deletedCount !== 1 ? 'es' : ''
+    }.`,
+  );
+
+  const levels = [];
+
+  for (let i = 0; i < levelNames.length; i++) {
+    levels.push({
+      name: levelNames[i],
+      description: chance.sentence({ length: 10 }),
+    });
+  }
+  const result = await Level.insertMany(levels);
+  console.log(
+    `Insertado${result.length !== 1 ? 's' : ''} ${result.length} nivel${
+      result.length !== 1 ? 'es' : ''
+    }.`,
+  );
+}
+
 async function initFavs() {
   const { deletedCount } = await Favorite.deleteMany();
   console.log(
@@ -171,7 +200,7 @@ async function initFavs() {
 async function initLessons() {
   const { deletedCount } = await Lesson.deleteMany();
   console.log(
-    `Eliminado${deletedCount !== 1 ? 's' : ''} ${deletedCount} favorito${
+    `Eliminado${deletedCount !== 1 ? 's' : ''} ${deletedCount} lesson${
       deletedCount !== 1 ? 's' : ''
     }.`,
   );
