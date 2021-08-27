@@ -15,6 +15,11 @@ router.get('/', async function (req, res, next) {
     if (!levels) {
       return res.status(404).json({ error: 'not found' });
     }
+    const levelNames = [];
+    levels.forEach((item) => {
+      levelNames.push(item.name);
+    });
+    console.log(levelNames);
     res.json(levels);
   } catch (err) {
     next(err);

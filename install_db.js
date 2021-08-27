@@ -22,7 +22,7 @@ const {
 const { parse } = require('dotenv');
 
 const categoryNames = ['Sciences', 'Arts', 'Programming', 'Sports'];
-const levelNames = [0, 1, 2, 3];
+const levelNames = ['Basic', 'Medium', 'Expert', 'Professional'];
 
 const images = [
   'https://final-project-web-x.s3.amazonaws.com/test-1628981970289.jpg',

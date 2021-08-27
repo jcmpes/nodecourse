@@ -4,6 +4,7 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 const Category = mongoose.model('Category');
+const Level = mongoose.model('Level');
 const Lesson = mongoose.model('Lesson');
 const Course = mongoose.model('Course');
 const User = mongoose.model('User');
@@ -61,7 +62,7 @@ router.get('/', async function (req, res, next) {
     const price = req.query.price;
     const username = req.query.user;
     const categoryname = req.query.category;
-    const level = req.query.level;
+    const levelname = req.query.levels;
 
     const user = await User.findOne({
       username: {
@@ -72,6 +73,12 @@ router.get('/', async function (req, res, next) {
     const category = await Category.findOne({
       name: {
         $regex: `${categoryname}`,
+        $options: 'i',
+      },
+    });
+    const level = await Level.findOne({
+      name: {
+        $regex: `${levelname}`,
         $options: 'i',
       },
     });
@@ -95,7 +102,7 @@ router.get('/', async function (req, res, next) {
       filter.category = category._id;
     }
     if (level) {
-      filter.level = level;
+      filter.level = level._id;
     }
 
     if (price) {
@@ -129,6 +136,7 @@ router.get('/:slug', async function (req, res, next) {
   try {
     const slug = req.params.slug;
     const course = await Course.findOne({ slug })
+      .populate('level')
       .populate('lessons')
       .populate('user', 'username');
     if (!course) {
