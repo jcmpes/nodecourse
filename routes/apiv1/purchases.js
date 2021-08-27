@@ -8,6 +8,9 @@ const Purchase = mongoose.model('Purchase');
 const Course = mongoose.model('Course');
 const jwtAuth = require('../../lib/jwAuth');
 const sendEmail = require('../../lib/mailing');
+require('dotenv').config();
+
+const stripe = require('stripe')(process.env.STRIPE_SECRET);
 
 /**
  * Get /api/v1/purchases/user
@@ -49,79 +52,125 @@ router.get('/:purchaseId', jwtAuth, async function (req, res, next) {
   }
 });
 
-/**
- * Get /api/v1/purchases
- * create a new purchase
- */
-router.post('/', jwtAuth, async function (req, res, next) {
+async function calculateOrderAmount(items) {
+  // Replace this constant with a calculation of the order's amount
+  // Calculate the order total on the server to prevent
+  // people from directly manipulating the amount on the client
   try {
-    // Server side validation
-    const purchaseData = req.body;
-    const userId = req.apiAuthUserId;
-    const purchasedCourses =
-      typeof purchaseData.purchasedCourses === 'string'
-        ? [purchaseData.purchasedCourses]
-        : purchaseData.purchasedCourses;
+    let total = 0;
+    for await (let item of items) {
+      const course = await Course.findOne({ _id: item });
+      total = total + course.price;
+    }
+    return total * 100;
+  } catch (err) {
+    console.log(err);
+  }
+}
 
-    const validation = purchasedCourses && purchaseData.paymentCode;
-    if (!validation) {
-      res.status(400).json({ message: 'all purchase data is required' });
+/**
+ * POST /api/v1/purchases/create-payment-intent
+ * Create a new purchase with pending status
+ */
+router.post('/create-payment-intent', jwtAuth, async function (req, res, next) {
+  try {
+    // Get items and user
+    const userId = req.apiAuthUserId;
+    const { items } = req.body;
+
+    if (!userId) {
+      res.status(401).json({ message: "User unauthorized or token has expired"})
+    }
+
+    if (!items) {
+      res.status(400).json({ message: 'No courses to purchase' });
       return;
     }
 
-    // check user
+    // Check user
     const user = await User.findOne({ _id: userId });
     if (!user) {
-      res.status(404).json({ error: 'user not found' });
+      res.status(404).json({ error: 'User not found' });
       return;
     }
-    console.log(purchasedCourses);
-    // check if any of the purchased courses have already been purchased
+
+    // Check if any of the purchased courses have already been purchased
     let alreadyPurchased = false;
-    purchasedCourses.forEach((course) => {
+    items.forEach((course) => {
       if (user.courses.includes(course)) {
         alreadyPurchased = true;
       }
     });
     if (alreadyPurchased) {
-      res.status(401).json({ error: 'course already purchased' });
+      res
+        .status(401)
+        .json({ error: 'One of the courses is already purchased' });
       return;
     }
 
-    // add purchases courses to user purchase array
+    // Create a PaymentIntent with the order amount and currency
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: await calculateOrderAmount(items),
+      currency: 'eur',
+    });
+    
+    // Save payment intent in DB
+    const { amount, id, status } = paymentIntent;
+    const newPurchase = new Purchase({
+      username: mongoose.Types.ObjectId(userId),
+      purchasedCourses: items,
+      purchasePrice: amount,
+      purchaseDate: new Date(),
+      paymentCode: id,
+      status: status,
+    });
+    await newPurchase.save();
+
+    // Send response to client
+    res.send({
+      clientSecret: paymentIntent.client_secret,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+/**
+ * POST /api/v1/purchases/webhook
+ * Confirm new purchase is completed and successful
+ */
+router.post('/webhook', async (req, res) => {
+  const { type, data } = req.body;
+  console.log('Data from Stripe ', data)
+
+  if (type === 'payment_intent.succeeded') {
+    const singlePurchase = await Purchase.findOne({ paymentCode: data.object.id })
+      .populate('username');
+    console.log('SINGLE PURCHASE POPULATED: ', singlePurchase)
+    
+    // Update purchase status
+    singlePurchase.status = data.object.status;
+    const updatedPurchase = await singlePurchase.save()
+    console.log('UPDATED PURCHASE: ', updatedPurchase)
+
+    // Add purchased courses to user courses array
     await User.findOneAndUpdate(
-      { _id: userId },
-      { $push: { courses: purchasedCourses } },
+      { _id: singlePurchase.username._id },
+      { $push: { courses: singlePurchase.purchasedCourses } },
     );
 
-    // check price courses in DB in order to add total price to purchaseData
-    let totalCoursesPrice = 0;
-    for (let i = 0; i < purchasedCourses.length; i++) {
-      const courseId = purchasedCourses[i];
-      const course = await Course.findOne({ _id: courseId });
-      if (course.price) {
-        totalCoursesPrice += course.price;
-      }
-    }
-    purchaseData.purchasePrice = totalCoursesPrice;
-
-    purchaseData.username = userId;
-    purchaseData.purchaseDate = Date.now();
-
-    const purchase = new Purchase(purchaseData);
-    const newPurchase = await purchase.save();
-
+    // Send new email notifications to user and to teachers
+    // of all courses purchased
     const mailObjCoustomer = {
       from: 'purchases@nodecourse.com',
-      subject: `Thank you, ${user.username}`,
-      recipients: [user.email],
+      subject: `Thank you, ${singlePurchase.username.username}`,
+      recipients: [singlePurchase.username.email],
       message: `Your purchase has been completed. Enjoy your learning:<br>
       `,
     };
-
-    for (let i = 0; i < newPurchase.purchasedCourses.length; i++) {
+    for (let i = 0; i < singlePurchase.purchasedCourses.length; i++) {
       await Course.findOne({
-        _id: newPurchase.purchasedCourses[i],
+        _id: singlePurchase.purchasedCourses[i],
       })
         .then(async (course) => {
           mailObjCoustomer.message += `<br>- ${course.title}`;
@@ -134,7 +183,7 @@ router.post('/', jwtAuth, async function (req, res, next) {
                 recipients: [userTeacher.email],
                 message: `One of your courses has been purchased:<br>
               ${course.title}
-              ${user.username} is your new alumn.<br>Greetings.`,
+              ${singlePurchase.username.username} is your new alumn.<br>Greetings.`,
               };
               sendEmail(mailObjTeacher);
             })
@@ -142,12 +191,9 @@ router.post('/', jwtAuth, async function (req, res, next) {
         })
         .catch(console.log);
     }
-
     sendEmail(mailObjCoustomer);
 
-    res.status(201).json({ newPurchaseCreated: newPurchase });
-  } catch (error) {
-    next(error);
+    res.sendStatus(200);
   }
 });
 
