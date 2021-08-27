@@ -141,17 +141,14 @@ router.post('/create-payment-intent', jwtAuth, async function (req, res, next) {
  */
 router.post('/webhook', async (req, res) => {
   const { type, data } = req.body;
-  console.log('Data from Stripe ', data)
 
   if (type === 'payment_intent.succeeded') {
     const singlePurchase = await Purchase.findOne({ paymentCode: data.object.id })
       .populate('username');
-    console.log('SINGLE PURCHASE POPULATED: ', singlePurchase)
     
     // Update purchase status
     singlePurchase.status = data.object.status;
     const updatedPurchase = await singlePurchase.save()
-    console.log('UPDATED PURCHASE: ', updatedPurchase)
 
     // Add purchased courses to user courses array
     await User.findOneAndUpdate(
