@@ -169,10 +169,6 @@ router.get('/:slug/:lessonSlug', jwtAuth, async function (req, res, next) {
     const user = await User.findOne({ _id });
     const isPurchased = user.courses.includes(course._id);
 
-    console.log('id ', _id);
-    console.log('course user', course.user._id);
-    console.log(!isPurchased);
-    console.log(_id != course.user._id);
     if (!isPurchased && _id != course.user._id) {
       return res.json({
         unauthorized: true,
@@ -295,6 +291,12 @@ router.put(
       const name = formData.category;
       const categoryId = await Category.findOne({ name });
       course.category = categoryId;
+
+      //Inject level
+      const levelName = formData.level;
+      const levelId = await Level.findOne({ name: levelName });
+      course.level = levelId;
+      console.log('NIVEL: ', course.level);
 
       if (req.file) {
         // Uplaod file to S3 and add image location to course object
