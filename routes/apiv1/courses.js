@@ -14,6 +14,7 @@ const fs = require('fs');
 const multer = require('multer');
 const { uploadFile } = require('../../lib/s3');
 const path = require('path');
+const { Purchase } = require('../../models');
 
 const UPLOAD_FOLDER = process.env.UPLOAD_FOLDER || 'public/images/';
 
@@ -156,13 +157,23 @@ router.get('/:slug', async function (req, res, next) {
  * GET /api/v1/courses/:slug/:lessonSlug
  * Return detail of a lesson by its slug
  */
-router.get('/:slug/:lessonSlug', async function (req, res, next) {
+router.get('/:slug/:lessonSlug', jwtAuth, async function (req, res, next) {
   try {
     const slug = req.params.slug;
     const lessonSlug = req.params.lessonSlug;
+    const _id = req.apiAuthUserId;
     const course = await Course.findOne({ slug })
       .populate('lessons')
       .populate('user', 'username');
+
+    const user = await User.findOne({ _id });
+    const isPurchased = user.courses.includes(course._id);
+
+    if (!isPurchased && _id !== course.user._id) {
+      return res.json({
+        unauthorized: true,
+      });
+    }
 
     const lesson = await course.lessons.find(
       (lesson) => lesson.slug === lessonSlug,
@@ -172,6 +183,7 @@ router.get('/:slug/:lessonSlug', async function (req, res, next) {
       ...lesson._doc,
       username: '',
       lessons: 0,
+      unauthorized: false,
     };
 
     lesson2.username = course.user.username;
@@ -180,7 +192,7 @@ router.get('/:slug/:lessonSlug', async function (req, res, next) {
     if (!course || !lesson) {
       return res.status(404).json({ error: 'not found' });
     }
-    res.json(lesson2);
+    return res.status(200).json(lesson2);
   } catch (err) {
     next(err);
   }
