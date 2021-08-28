@@ -150,12 +150,6 @@ router.post('/webhook', async (req, res) => {
     singlePurchase.status = data.object.status;
     const updatedPurchase = await singlePurchase.save()
 
-    // Add purchased courses to user courses array
-    await User.findOneAndUpdate(
-      { _id: singlePurchase.username._id },
-      { $push: { courses: singlePurchase.purchasedCourses } },
-    );
-
     // Send new email notifications to user and to teachers
     // of all courses purchased
     const mailObjCoustomer = {
