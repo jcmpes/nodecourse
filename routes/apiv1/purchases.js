@@ -79,7 +79,9 @@ router.post('/create-payment-intent', jwtAuth, async function (req, res, next) {
     const { items } = req.body;
 
     if (!userId) {
-      res.status(401).json({ message: "User unauthorized or token has expired"})
+      res
+        .status(401)
+        .json({ message: 'User unauthorized or token has expired' });
     }
 
     if (!items) {
@@ -113,7 +115,7 @@ router.post('/create-payment-intent', jwtAuth, async function (req, res, next) {
       amount: await calculateOrderAmount(items),
       currency: 'eur',
     });
-    
+
     // Save payment intent in DB
     const { amount, id, status } = paymentIntent;
     const newPurchase = new Purchase({
@@ -143,12 +145,19 @@ router.post('/webhook', async (req, res) => {
   const { type, data } = req.body;
 
   if (type === 'payment_intent.succeeded') {
-    const singlePurchase = await Purchase.findOne({ paymentCode: data.object.id })
-      .populate('username');
-    
+    const singlePurchase = await Purchase.findOne({
+      paymentCode: data.object.id,
+    }).populate('username');
+
     // Update purchase status
     singlePurchase.status = data.object.status;
-    const updatedPurchase = await singlePurchase.save()
+    const updatedPurchase = await singlePurchase.save();
+
+    // add purchases courses to user purchase array
+    await User.findOneAndUpdate(
+      { _id: singlePurchase.username._id },
+      { $push: { courses: singlePurchase.purchasedCourses } },
+    );
 
     // Send new email notifications to user and to teachers
     // of all courses purchased
