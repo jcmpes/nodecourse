@@ -213,7 +213,11 @@ router.post(
       // Inject category
       const name = formData.category;
       const categoryId = await Category.findOne({ name });
-      course.category = categoryId;
+      course.category = categoryId._id;
+
+      const levelName = formData.level;
+      const levelId = await Level.findOne({ name: levelName });
+      course.level = levelId._id;
 
       if (req.file) {
         // Uplaod file to S3 and add image location to course object
