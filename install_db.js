@@ -38,8 +38,8 @@ async function main() {
   await initUsers();
   await initCategories();
   await initLevels();
-  await initCourses();
   await initLessons();
+  await initCourses();
   await initFavs();
   await initPurchases();
   mongoose.connection.close();
