@@ -50,12 +50,10 @@ router.post("/", upload.single('image'), async function(req, res, next) {
   try {
     const { email, password, username } = req.body;
     const verifyToken = generator({ method: 'bytes', length: 24 });
-    console.log('REQ.FILE ', req.file)
     let avatar = null;
     if (req.file) {
       // Uplaod file to S3 and add image location to course object
       const file = req.file;
-      // const Location = req.file.path
       const { Location } = await uploadFile(file);
       avatar = Location;
     }

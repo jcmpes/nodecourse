@@ -72,13 +72,14 @@ router.put('/edit', jwtAuth, upload.single('image'), async function (req, res, n
     if (formData.email) user.email = formData.email;
     if (formData.password)
       user.password = await User.hashPassword(formData.password);
+    console.log('REQ.FILE: ', req.file);
     if (req.file) {
       // Uplaod file to S3 and add image location to course object
       const file = req.file;
-      // const Location = req.file.path
       const { Location } = await uploadFile(file);
       user.avatar = Location;
     }
+    console.log('USER DETAILS TO SAVE: ', user)
     const result = await user.save();
     res.status(200).json(result);
   } catch (err) {

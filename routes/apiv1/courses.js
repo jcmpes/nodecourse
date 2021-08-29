@@ -234,7 +234,6 @@ router.post(
       if (req.file) {
         // Uplaod file to S3 and add image location to course object
         const file = req.file;
-        // const Location = req.file.path
         const { Location } = await uploadFile(file);
         course.image = Location;
       }
