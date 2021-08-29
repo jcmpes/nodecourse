@@ -32,6 +32,16 @@ const images = [
   'https://final-project-web-x.s3.amazonaws.com/manos-1628841099367.png',
 ];
 
+const userImages = [
+  'https://final-project-web-x.s3.amazonaws.com/famous-1630275261270.jpeg',
+  'https://final-project-web-x.s3.amazonaws.com/rawImage-1630275338077.jpeg',
+  'https://final-project-web-x.s3.amazonaws.com/photo-1606122017369-d782bbb78f32-1630275576355.jpeg',
+  'https://final-project-web-x.s3.amazonaws.com/photo-1438761681033-6461ffad8d80-1630275619012.jpeg',
+  'https://final-project-web-x.s3.amazonaws.com/3251834-1630275717511.png',
+  'https://final-project-web-x.s3.amazonaws.com/Jabba_HS-1630275882718.jpeg',
+  'https://final-project-web-x.s3.amazonaws.com/hipnosapo-gif-5-1630275928312.gif'
+]
+
 main().catch((err) => console.error(err));
 
 async function main() {
@@ -60,6 +70,7 @@ async function initUsers() {
       username: 'Pepe',
       courses: [],
       activated: true,
+      avatar: userImages[0]
     },
   ];
 
@@ -71,6 +82,7 @@ async function initUsers() {
       username,
       courses: [],
       activated: true,
+      avatar: userImages[Math.floor(Math.random() * userImages.length)]
     });
   }
 
