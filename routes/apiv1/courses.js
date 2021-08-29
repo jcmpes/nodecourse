@@ -139,7 +139,7 @@ router.get('/:slug', async function (req, res, next) {
     const course = await Course.findOne({ slug })
       .populate('level')
       .populate('lessons')
-      .populate('user', 'username');
+      .populate('user', 'username avatar');
     if (!course) {
       return res.status(404).json({ error: 'not found' });
     }
