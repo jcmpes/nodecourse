@@ -136,7 +136,7 @@ router.get('/', jwtAuth, async function (req, res, next) {
   try {
     const _id = req.apiAuthUserId;
     const result = await User.findOne({ _id });
-    res.json({ username: result.username, email: result.email });
+    res.json({ username: result.username, avatar: result.avatar, email: result.email });
   } catch (err) {
     next(err);
   }

@@ -49,6 +49,7 @@ class LoginController {
             displayName: usuario.username,
             purchased: usuario.courses,
             favs,
+            avatar: usuario.avatar
           });
         },
       );
@@ -83,6 +84,7 @@ class LoginController {
           userID: jwtToken._id,
           purchased: usuario.courses,
           favs,
+          avatar: usuario.avatar
         });
       });
     } catch (err) {
