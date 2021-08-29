@@ -24,7 +24,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/api/v1/aboutme', require('./routes/apiv1/aboutme'));
 
 // API POST
-app.post('/api/v1/register', registerController.register);
+app.use('/api/v1/register', registerController);
 app.get('/api/v1/verify', verifyController.verify);
 app.post('/api/v1/loginJWT', loginController.postJWT);
 app.post('/api/v1/login-with-token', loginController.loginWithToken);

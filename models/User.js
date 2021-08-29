@@ -18,6 +18,7 @@ const userSchema = mongoose.Schema({
   activated: Boolean,
   verifyToken: String,
   verifyTokenExpires: Date,
+  avatar: String
 });
 
 userSchema.statics.hashPassword = function (plainPassword) {

@@ -7,6 +7,41 @@ const Course = mongoose.model('Course');
 const User = mongoose.model('User');
 const Favorite = mongoose.model('Favorite');
 const jwtAuth = require('../../lib/jwAuth');
+const fs = require('fs');
+const multer = require('multer');
+const { uploadFile } = require('../../lib/s3');
+const path = require('path');
+
+const UPLOAD_FOLDER = process.env.UPLOAD_FOLDER || 'public/images/';
+
+/**
+ * Configurar multer
+ */
+const fileExtensionRemover = (originalName) => {
+  return originalName.split('.')[0];
+};
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    fs.stat(UPLOAD_FOLDER, function (err, stats) {
+      if (err) {
+        return fs.mkdirSync(UPLOAD_FOLDER);
+      } else {
+        cb(null, UPLOAD_FOLDER);
+      }
+    });
+  },
+  filename: function (req, file, cb) {
+    cb(
+      null,
+      fileExtensionRemover(file.originalname) +
+        '-' +
+        Date.now() +
+        path.extname(file.originalname),
+    );
+  },
+});
+const upload = multer({ storage });
 
 router.get('/:username', async function (req, res, next) {
   try {
@@ -25,7 +60,7 @@ router.get('/:username', async function (req, res, next) {
   }
 });
 
-router.put('/edit', jwtAuth, async function (req, res, next) {
+router.put('/edit', jwtAuth, upload.single('image'), async function (req, res, next) {
   try {
     const _id = req.apiAuthUserId;
     const formData = { ...req.body };
@@ -37,6 +72,13 @@ router.put('/edit', jwtAuth, async function (req, res, next) {
     if (formData.email) user.email = formData.email;
     if (formData.password)
       user.password = await User.hashPassword(formData.password);
+    if (req.file) {
+      // Uplaod file to S3 and add image location to course object
+      const file = req.file;
+      // const Location = req.file.path
+      const { Location } = await uploadFile(file);
+      user.avatar = Location;
+    }
     const result = await user.save();
     res.status(200).json(result);
   } catch (err) {
