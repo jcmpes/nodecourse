@@ -106,6 +106,30 @@ router.post('/removefav/:course', jwtAuth, async function (req, res, next) {
 });
 
 /**
+ *
+ *
+ */
+router.get(
+  '/detailed-purchases',
+  jwtAuth,
+  async function async(req, res, next) {
+    try {
+      const _id = req.apiAuthUserId;
+      const user = await User.findOne({ _id });
+
+      const purchases = [];
+      for (let i = 0; i < user.courses.length; i++) {
+        const course = await Course.findOne({ _id: user.courses[i] });
+        purchases.push(course);
+      }
+      res.status(200).json(purchases);
+    } catch (err) {
+      next(err);
+    }
+  },
+);
+
+/**
 
  */
 router.get('/', jwtAuth, async function (req, res, next) {
