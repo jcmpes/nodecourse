@@ -143,6 +143,10 @@ router.get('/:slug', async function (req, res, next) {
     if (!course) {
       return res.status(404).json({ error: 'not found' });
     }
+    
+    // Sort lessons array
+    course.lessons = course.lessons.sort((a, b) => a.number - b.number);
+
     const numFavs = await Favorite.find({
       'fav.course': course._id,
     }).countDocuments();
