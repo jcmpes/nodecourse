@@ -154,7 +154,7 @@ router.post('/webhook', async (req, res) => {
     const updatedPurchase = await singlePurchase.save();
 
     // add purchases courses to user purchase array
-    await User.findOneAndUpdate(
+    const user = await User.findOneAndUpdate(
       { _id: singlePurchase.username._id },
       { $push: { courses: singlePurchase.purchasedCourses } },
     );
@@ -162,7 +162,7 @@ router.post('/webhook', async (req, res) => {
     // Send new email notifications to user and to teachers
     // of all courses purchased
     const mailObjCoustomer = {
-      from: 'purchases@nodecourse.com',
+      from: 'purchases@teachitup.com',
       subject: `Thank you, ${singlePurchase.username.username}`,
       recipients: [singlePurchase.username.email],
       message: `Your purchase has been completed. Enjoy your learning:<br>
@@ -172,18 +172,19 @@ router.post('/webhook', async (req, res) => {
       await Course.findOne({
         _id: singlePurchase.purchasedCourses[i],
       })
+        .populate('user')
         .then(async (course) => {
-          mailObjCoustomer.message += `<br>- ${course.title}`;
+          mailObjCoustomer.message += `<br>- ${course.title} - Instructor: ${course.user.email}`;
 
           await User.findOne({ _id: course.user })
             .then((userTeacher) => {
               const mailObjTeacher = {
-                from: 'purchases@nodecourse.com',
+                from: 'purchases@teachitup.com',
                 subject: `Congratulations, ${userTeacher.username}`,
                 recipients: [userTeacher.email],
                 message: `One of your courses has been purchased:<br>
               ${course.title}
-              ${singlePurchase.username.username} is your new alumn.<br>Greetings.`,
+              ${singlePurchase.username.username} is your new alumn. ( ${user.email} )<br>Greetings.`,
               };
               sendEmail(mailObjTeacher);
             })
