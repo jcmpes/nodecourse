@@ -299,7 +299,6 @@ router.put(
       const levelName = formData.level;
       const levelId = await Level.findOne({ name: levelName });
       course.level = levelId;
-      console.log('NIVEL: ', course.level);
 
       if (req.file) {
         // Uplaod file to S3 and add image location to course object

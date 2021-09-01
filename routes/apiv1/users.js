@@ -90,7 +90,6 @@ router.post('/delete-account', jwtAuth, async function (req, res, next) {
   try {
     const _id = req.apiAuthUserId;
     const { password } = req.body;
-    console.log(password);
     const user = await User.findOne({ _id });
     if (!user) {
       return res.status(404).json({ error: 'not found' });
@@ -99,7 +98,6 @@ router.post('/delete-account', jwtAuth, async function (req, res, next) {
     if (await user.comparePassword(password)) {
       await User.findOneAndDelete({ _id }, function (err, result) {
         if (err) {
-          console.log('nop');
           res.status(500).json({ delete: 'fail' });
         } else {
           Course.deleteMany({ user: _id }).then(({ deletedCount }) => {

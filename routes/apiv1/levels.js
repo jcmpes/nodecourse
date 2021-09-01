@@ -19,7 +19,6 @@ router.get('/', async function (req, res, next) {
     levels.forEach((item) => {
       levelNames.push(item.name);
     });
-    console.log(levelNames);
     res.json(levels);
   } catch (err) {
     next(err);

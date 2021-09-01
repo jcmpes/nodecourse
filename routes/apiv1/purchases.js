@@ -45,7 +45,6 @@ router.get('/:purchaseId', jwtAuth, async function (req, res, next) {
     const userId = req.apiAuthUserId;
     // TODO comprobar que el usuario es correcto
     const purchase = await Purchase.findOne({ _id: purchaseId });
-    console.log('purchase', purchase);
     res.json({ purchase });
   } catch (error) {
     next(error);
