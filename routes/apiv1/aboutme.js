@@ -120,7 +120,7 @@ router.get(
       const purchases = [];
       for (let i = 0; i < user.courses.length; i++) {
         const course = await Course.findOne({ _id: user.courses[i] });
-        purchases.push(course);
+        if (course) purchases.push(course);
       }
       res.status(200).json(purchases);
     } catch (err) {
@@ -136,7 +136,11 @@ router.get('/', jwtAuth, async function (req, res, next) {
   try {
     const _id = req.apiAuthUserId;
     const result = await User.findOne({ _id });
-    res.json({ username: result.username, avatar: result.avatar, email: result.email });
+    res.json({
+      username: result.username,
+      avatar: result.avatar,
+      email: result.email,
+    });
   } catch (err) {
     next(err);
   }
