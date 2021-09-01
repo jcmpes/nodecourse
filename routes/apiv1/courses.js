@@ -86,7 +86,7 @@ router.get('/', async function (req, res, next) {
 
     const limit = parseInt(req.query.limit) || 10;
     const skip = parseInt(req.query.skip) || 0;
-    const sort = req.query.sort || { _id: -1 };
+    const sort = (typeof req.query.sort === 'object') ? { _id: -1 } : req.query.sort;
 
     // empty filter
     const filter = {};
